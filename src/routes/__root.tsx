@@ -12,7 +12,9 @@ import appCss from "../styles.css?url";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { LibraryProvider } from "@/store/libraryStore";
+import { AuthProvider, useAuth } from "@/store/authStore";
 import { Toaster } from "@/components/ui/sonner";
+import { LoginScreen } from "@/components/auth/LoginScreen";
 
 function NotFoundComponent() {
   return (
@@ -69,8 +71,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Quản lý thư viện sách" },
       { property: "og:description", content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo." },
       { name: "twitter:description", content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/5f06a668-2c15-44b1-b009-ae2363871f70" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/5f06a668-2c15-44b1-b009-ae2363871f70" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
@@ -104,29 +104,39 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AuthedShell() {
+  const { currentUser } = useAuth();
+  if (!currentUser) return <LoginScreen />;
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur">
+            <SidebarTrigger />
+            <span className="font-display text-sm font-medium text-muted-foreground">
+              Hệ thống quản lý thư viện
+            </span>
+          </header>
+          <main className="flex-1 px-6 py-8">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <LibraryProvider>
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full bg-background">
-            <AppSidebar />
-            <div className="flex flex-1 flex-col">
-              <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur">
-                <SidebarTrigger />
-                <span className="font-display text-sm font-medium text-muted-foreground">
-                  Hệ thống quản lý thư viện
-                </span>
-              </header>
-              <main className="flex-1 px-6 py-8">
-                <Outlet />
-              </main>
-            </div>
-          </div>
+      <AuthProvider>
+        <LibraryProvider>
+          <AuthedShell />
           <Toaster richColors position="top-right" />
-        </SidebarProvider>
-      </LibraryProvider>
+        </LibraryProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
