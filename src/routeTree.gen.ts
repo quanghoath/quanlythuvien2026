@@ -9,8 +9,68 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VaiTroRouteImport } from './routes/vai-tro'
+import { Route as TheLoaiRouteImport } from './routes/the-loai'
+import { Route as TaiKhoanRouteImport } from './routes/tai-khoan'
+import { Route as TacGiaRouteImport } from './routes/tac-gia'
+import { Route as SachRouteImport } from './routes/sach'
+import { Route as PhieuTraRouteImport } from './routes/phieu-tra'
+import { Route as PhieuMuonRouteImport } from './routes/phieu-muon'
+import { Route as NhatKySachRouteImport } from './routes/nhat-ky-sach'
+import { Route as DocGiaRouteImport } from './routes/doc-gia'
+import { Route as BaoCaoRouteImport } from './routes/bao-cao'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VaiTroRoute = VaiTroRouteImport.update({
+  id: '/vai-tro',
+  path: '/vai-tro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TheLoaiRoute = TheLoaiRouteImport.update({
+  id: '/the-loai',
+  path: '/the-loai',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaiKhoanRoute = TaiKhoanRouteImport.update({
+  id: '/tai-khoan',
+  path: '/tai-khoan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TacGiaRoute = TacGiaRouteImport.update({
+  id: '/tac-gia',
+  path: '/tac-gia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SachRoute = SachRouteImport.update({
+  id: '/sach',
+  path: '/sach',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhieuTraRoute = PhieuTraRouteImport.update({
+  id: '/phieu-tra',
+  path: '/phieu-tra',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PhieuMuonRoute = PhieuMuonRouteImport.update({
+  id: '/phieu-muon',
+  path: '/phieu-muon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NhatKySachRoute = NhatKySachRouteImport.update({
+  id: '/nhat-ky-sach',
+  path: '/nhat-ky-sach',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocGiaRoute = DocGiaRouteImport.update({
+  id: '/doc-gia',
+  path: '/doc-gia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BaoCaoRoute = BaoCaoRouteImport.update({
+  id: '/bao-cao',
+  path: '/bao-cao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +79,172 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bao-cao': typeof BaoCaoRoute
+  '/doc-gia': typeof DocGiaRoute
+  '/nhat-ky-sach': typeof NhatKySachRoute
+  '/phieu-muon': typeof PhieuMuonRoute
+  '/phieu-tra': typeof PhieuTraRoute
+  '/sach': typeof SachRoute
+  '/tac-gia': typeof TacGiaRoute
+  '/tai-khoan': typeof TaiKhoanRoute
+  '/the-loai': typeof TheLoaiRoute
+  '/vai-tro': typeof VaiTroRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bao-cao': typeof BaoCaoRoute
+  '/doc-gia': typeof DocGiaRoute
+  '/nhat-ky-sach': typeof NhatKySachRoute
+  '/phieu-muon': typeof PhieuMuonRoute
+  '/phieu-tra': typeof PhieuTraRoute
+  '/sach': typeof SachRoute
+  '/tac-gia': typeof TacGiaRoute
+  '/tai-khoan': typeof TaiKhoanRoute
+  '/the-loai': typeof TheLoaiRoute
+  '/vai-tro': typeof VaiTroRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bao-cao': typeof BaoCaoRoute
+  '/doc-gia': typeof DocGiaRoute
+  '/nhat-ky-sach': typeof NhatKySachRoute
+  '/phieu-muon': typeof PhieuMuonRoute
+  '/phieu-tra': typeof PhieuTraRoute
+  '/sach': typeof SachRoute
+  '/tac-gia': typeof TacGiaRoute
+  '/tai-khoan': typeof TaiKhoanRoute
+  '/the-loai': typeof TheLoaiRoute
+  '/vai-tro': typeof VaiTroRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/bao-cao'
+    | '/doc-gia'
+    | '/nhat-ky-sach'
+    | '/phieu-muon'
+    | '/phieu-tra'
+    | '/sach'
+    | '/tac-gia'
+    | '/tai-khoan'
+    | '/the-loai'
+    | '/vai-tro'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/bao-cao'
+    | '/doc-gia'
+    | '/nhat-ky-sach'
+    | '/phieu-muon'
+    | '/phieu-tra'
+    | '/sach'
+    | '/tac-gia'
+    | '/tai-khoan'
+    | '/the-loai'
+    | '/vai-tro'
+  id:
+    | '__root__'
+    | '/'
+    | '/bao-cao'
+    | '/doc-gia'
+    | '/nhat-ky-sach'
+    | '/phieu-muon'
+    | '/phieu-tra'
+    | '/sach'
+    | '/tac-gia'
+    | '/tai-khoan'
+    | '/the-loai'
+    | '/vai-tro'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BaoCaoRoute: typeof BaoCaoRoute
+  DocGiaRoute: typeof DocGiaRoute
+  NhatKySachRoute: typeof NhatKySachRoute
+  PhieuMuonRoute: typeof PhieuMuonRoute
+  PhieuTraRoute: typeof PhieuTraRoute
+  SachRoute: typeof SachRoute
+  TacGiaRoute: typeof TacGiaRoute
+  TaiKhoanRoute: typeof TaiKhoanRoute
+  TheLoaiRoute: typeof TheLoaiRoute
+  VaiTroRoute: typeof VaiTroRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vai-tro': {
+      id: '/vai-tro'
+      path: '/vai-tro'
+      fullPath: '/vai-tro'
+      preLoaderRoute: typeof VaiTroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/the-loai': {
+      id: '/the-loai'
+      path: '/the-loai'
+      fullPath: '/the-loai'
+      preLoaderRoute: typeof TheLoaiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tai-khoan': {
+      id: '/tai-khoan'
+      path: '/tai-khoan'
+      fullPath: '/tai-khoan'
+      preLoaderRoute: typeof TaiKhoanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tac-gia': {
+      id: '/tac-gia'
+      path: '/tac-gia'
+      fullPath: '/tac-gia'
+      preLoaderRoute: typeof TacGiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sach': {
+      id: '/sach'
+      path: '/sach'
+      fullPath: '/sach'
+      preLoaderRoute: typeof SachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/phieu-tra': {
+      id: '/phieu-tra'
+      path: '/phieu-tra'
+      fullPath: '/phieu-tra'
+      preLoaderRoute: typeof PhieuTraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/phieu-muon': {
+      id: '/phieu-muon'
+      path: '/phieu-muon'
+      fullPath: '/phieu-muon'
+      preLoaderRoute: typeof PhieuMuonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nhat-ky-sach': {
+      id: '/nhat-ky-sach'
+      path: '/nhat-ky-sach'
+      fullPath: '/nhat-ky-sach'
+      preLoaderRoute: typeof NhatKySachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doc-gia': {
+      id: '/doc-gia'
+      path: '/doc-gia'
+      fullPath: '/doc-gia'
+      preLoaderRoute: typeof DocGiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bao-cao': {
+      id: '/bao-cao'
+      path: '/bao-cao'
+      fullPath: '/bao-cao'
+      preLoaderRoute: typeof BaoCaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +257,16 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BaoCaoRoute: BaoCaoRoute,
+  DocGiaRoute: DocGiaRoute,
+  NhatKySachRoute: NhatKySachRoute,
+  PhieuMuonRoute: PhieuMuonRoute,
+  PhieuTraRoute: PhieuTraRoute,
+  SachRoute: SachRoute,
+  TacGiaRoute: TacGiaRoute,
+  TaiKhoanRoute: TaiKhoanRoute,
+  TheLoaiRoute: TheLoaiRoute,
+  VaiTroRoute: VaiTroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
