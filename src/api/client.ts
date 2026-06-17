@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://123.31.12.172:6001/";
+const API_URL = "https://api.wizweb.vn/";
 
 const apiClient = axios.create({
   baseURL: API_URL,
