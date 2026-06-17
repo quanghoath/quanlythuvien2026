@@ -32,6 +32,7 @@ type Props<T> = {
   onDelete?: (row: T) => void;
   onExport?: () => void;
   extraActions?: ReactNode;
+  editIcon?: ReactNode;
 };
 
 export function CrudPage<T>({
@@ -46,6 +47,7 @@ export function CrudPage<T>({
   onDelete,
   onExport,
   extraActions,
+  editIcon,
 }: Props<T>) {
   const [q, setQ] = useState("");
   const [toDelete, setToDelete] = useState<T | null>(null);
@@ -122,7 +124,7 @@ export function CrudPage<T>({
                       <div className="flex justify-end gap-1">
                         {onEdit && (
                           <Button size="icon" variant="ghost" onClick={() => onEdit(row)}>
-                            <Pencil className="h-4 w-4" />
+                            {editIcon ?? <Pencil className="h-4 w-4" />}
                           </Button>
                         )}
                         {onDelete && (
