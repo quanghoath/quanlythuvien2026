@@ -1,7 +1,7 @@
 export function exportToCSV<T extends Record<string, unknown>>(
   filename: string,
   rows: T[],
-  headers?: { key: keyof T; label: string }[]
+  headers?: { key: keyof T; label: string }[],
 ) {
   if (rows.length === 0) return;
   const cols =

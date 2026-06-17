@@ -18,7 +18,13 @@ export const mockVaiTro: VaiTro[] = [
 ];
 
 export const mockTaiKhoan: TaiKhoan[] = [
-  { MaTaiKhoan: 1, TenDangNhap: "admin", MatKhau: "admin123", HoTen: "Nguyễn Quản Trị", MaVaiTro: 1 },
+  {
+    MaTaiKhoan: 1,
+    TenDangNhap: "admin",
+    MatKhau: "admin123",
+    HoTen: "Nguyễn Quản Trị",
+    MaVaiTro: 1,
+  },
   { MaTaiKhoan: 2, TenDangNhap: "thuthu", MatKhau: "123456", HoTen: "Trần Thị Thư", MaVaiTro: 2 },
   { MaTaiKhoan: 3, TenDangNhap: "nhanvien", MatKhau: "123456", HoTen: "Lê Văn Nhân", MaVaiTro: 3 },
 ];
@@ -44,14 +50,78 @@ export const mockTheLoai: TheLoai[] = [
 ];
 
 export const mockSach: Sach[] = [
-  { MaSach: 1, TenSach: "Dế Mèn Phiêu Lưu Ký", MaTacGia: 1, MaTheLoai: 1, NamXuatBan: 2019, SoLuong: 10, SoLuongCon: 7 },
-  { MaSach: 2, TenSach: "Số Đỏ", MaTacGia: 2, MaTheLoai: 1, NamXuatBan: 2018, SoLuong: 8, SoLuongCon: 5 },
-  { MaSach: 3, TenSach: "Vũ Trụ Trong Vỏ Hạt Dẻ", MaTacGia: 3, MaTheLoai: 2, NamXuatBan: 2020, SoLuong: 6, SoLuongCon: 3 },
-  { MaSach: 4, TenSach: "Clean Code", MaTacGia: 4, MaTheLoai: 3, NamXuatBan: 2008, SoLuong: 12, SoLuongCon: 9 },
-  { MaSach: 5, TenSach: "JavaScript Tinh Hoa", MaTacGia: 5, MaTheLoai: 3, NamXuatBan: 2017, SoLuong: 7, SoLuongCon: 4 },
-  { MaSach: 6, TenSach: "Sapiens: Lược Sử Loài Người", MaTacGia: 7, MaTheLoai: 2, NamXuatBan: 2019, SoLuong: 9, SoLuongCon: 6 },
-  { MaSach: 7, TenSach: "Đắc Nhân Tâm", MaTacGia: 6, MaTheLoai: 5, NamXuatBan: 2020, SoLuong: 20, SoLuongCon: 14 },
-  { MaSach: 8, TenSach: "Doraemon Tập 1", MaTacGia: 8, MaTheLoai: 6, NamXuatBan: 2022, SoLuong: 25, SoLuongCon: 20 },
+  {
+    MaSach: 1,
+    TenSach: "Dế Mèn Phiêu Lưu Ký",
+    MaTacGia: 1,
+    MaTheLoai: 1,
+    NamXuatBan: 2019,
+    SoLuong: 10,
+    SoLuongCon: 7,
+  },
+  {
+    MaSach: 2,
+    TenSach: "Số Đỏ",
+    MaTacGia: 2,
+    MaTheLoai: 1,
+    NamXuatBan: 2018,
+    SoLuong: 8,
+    SoLuongCon: 5,
+  },
+  {
+    MaSach: 3,
+    TenSach: "Vũ Trụ Trong Vỏ Hạt Dẻ",
+    MaTacGia: 3,
+    MaTheLoai: 2,
+    NamXuatBan: 2020,
+    SoLuong: 6,
+    SoLuongCon: 3,
+  },
+  {
+    MaSach: 4,
+    TenSach: "Clean Code",
+    MaTacGia: 4,
+    MaTheLoai: 3,
+    NamXuatBan: 2008,
+    SoLuong: 12,
+    SoLuongCon: 9,
+  },
+  {
+    MaSach: 5,
+    TenSach: "JavaScript Tinh Hoa",
+    MaTacGia: 5,
+    MaTheLoai: 3,
+    NamXuatBan: 2017,
+    SoLuong: 7,
+    SoLuongCon: 4,
+  },
+  {
+    MaSach: 6,
+    TenSach: "Sapiens: Lược Sử Loài Người",
+    MaTacGia: 7,
+    MaTheLoai: 2,
+    NamXuatBan: 2019,
+    SoLuong: 9,
+    SoLuongCon: 6,
+  },
+  {
+    MaSach: 7,
+    TenSach: "Đắc Nhân Tâm",
+    MaTacGia: 6,
+    MaTheLoai: 5,
+    NamXuatBan: 2020,
+    SoLuong: 20,
+    SoLuongCon: 14,
+  },
+  {
+    MaSach: 8,
+    TenSach: "Doraemon Tập 1",
+    MaTacGia: 8,
+    MaTheLoai: 6,
+    NamXuatBan: 2022,
+    SoLuong: 25,
+    SoLuongCon: 20,
+  },
 ];
 
 export const mockDocGia: DocGia[] = [
@@ -91,6 +161,18 @@ export const mockPhieuTra: PhieuTra[] = [
 ];
 
 export const mockNhatKySach: NhatKySach[] = [
-  { MaNhatKy: 1, MaSach: 4, TenSachCu: "Clean Code (v1)", TenSachMoi: "Clean Code", NgayCapNhat: new Date(Date.now() - 86400000 * 7).toISOString() },
-  { MaNhatKy: 2, MaSach: 7, TenSachCu: "Dac Nhan Tam", TenSachMoi: "Đắc Nhân Tâm", NgayCapNhat: new Date(Date.now() - 86400000 * 2).toISOString() },
+  {
+    MaNhatKy: 1,
+    MaSach: 4,
+    TenSachCu: "Clean Code (v1)",
+    TenSachMoi: "Clean Code",
+    NgayCapNhat: new Date(Date.now() - 86400000 * 7).toISOString(),
+  },
+  {
+    MaNhatKy: 2,
+    MaSach: 7,
+    TenSachCu: "Dac Nhan Tam",
+    TenSachMoi: "Đắc Nhân Tâm",
+    NgayCapNhat: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
 ];

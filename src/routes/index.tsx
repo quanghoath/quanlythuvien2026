@@ -26,7 +26,14 @@ export const Route = createFileRoute("/")({
   component: DashboardPage,
 });
 
-const PIE_COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)", "var(--primary)"];
+const PIE_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+  "var(--primary)",
+];
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -37,7 +44,7 @@ function DashboardPage() {
     const tongSach = sach.reduce((s, b) => s + b.SoLuong, 0);
     const conLai = sach.reduce((s, b) => s + b.SoLuongCon, 0);
     const dangMuon = phieuMuon.filter(
-      (pm) => !phieuTra.some((pt) => pt.MaPhieuMuon === pm.MaPhieuMuon)
+      (pm) => !phieuTra.some((pt) => pt.MaPhieuMuon === pm.MaPhieuMuon),
     );
     const quaHan = dangMuon.filter((pm) => pm.HanTra < today()).length;
     return { tongSach, conLai, dangMuon: dangMuon.length, quaHan };
@@ -49,7 +56,7 @@ function DashboardPage() {
         name: c.TenTheLoai,
         value: sach.filter((b) => b.MaTheLoai === c.MaTheLoai).reduce((s, b) => s + b.SoLuong, 0),
       })),
-    [theLoai, sach]
+    [theLoai, sach],
   );
 
   const muonTheoThang = useMemo(() => {
@@ -83,7 +90,7 @@ function DashboardPage() {
             trangThai: daTra ? "returned" : quaHan ? "overdue" : "borrowing",
           };
         }),
-    [phieuMuon, docGia, phieuTra]
+    [phieuMuon, docGia, phieuTra],
   );
 
   return (
@@ -91,10 +98,21 @@ function DashboardPage() {
       <PageHeader title="Tổng quan" description="Cái nhìn nhanh về tình trạng thư viện hôm nay." />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Tổng số sách" value={stats.tongSach} icon={BookOpen} hint={`${sach.length} đầu sách`} />
+        <StatCard
+          label="Tổng số sách"
+          value={stats.tongSach}
+          icon={BookOpen}
+          hint={`${sach.length} đầu sách`}
+        />
         <StatCard label="Đang có sẵn" value={stats.conLai} icon={BookMarked} tone="success" />
         <StatCard label="Độc giả" value={docGia.length} icon={Users} />
-        <StatCard label="Quá hạn" value={stats.quaHan} icon={AlertTriangle} tone="destructive" hint={`${stats.dangMuon} đang mượn`} />
+        <StatCard
+          label="Quá hạn"
+          value={stats.quaHan}
+          icon={AlertTriangle}
+          tone="destructive"
+          hint={`${stats.dangMuon} đang mượn`}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -109,7 +127,13 @@ function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                   <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={12} />
                   <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
-                  <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "var(--popover)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                    }}
+                  />
                   <Bar dataKey="count" fill="var(--primary)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -125,12 +149,25 @@ function DashboardPage() {
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={sachTheoTheLoai} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} paddingAngle={2}>
+                  <Pie
+                    data={sachTheoTheLoai}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={45}
+                    outerRadius={80}
+                    paddingAngle={2}
+                  >
                     {sachTheoTheLoai.map((_, i) => (
                       <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "var(--popover)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                    }}
+                  />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               </ResponsiveContainer>
@@ -144,10 +181,14 @@ function DashboardPage() {
           <CardTitle>Phiếu mượn gần đây</CardTitle>
           <div className="flex gap-2">
             <Button asChild variant="ghost" size="sm">
-              <Link to="/phieu-tra"><RotateCcw className="mr-1 h-4 w-4" /> Phiếu trả</Link>
+              <Link to="/phieu-tra">
+                <RotateCcw className="mr-1 h-4 w-4" /> Phiếu trả
+              </Link>
             </Button>
             <Button asChild variant="ghost" size="sm">
-              <Link to="/phieu-muon">Xem tất cả <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              <Link to="/phieu-muon">
+                Xem tất cả <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </CardHeader>
@@ -156,16 +197,34 @@ function DashboardPage() {
             {phieuGanDay.map((pm) => (
               <div key={pm.MaPhieuMuon} className="flex items-center justify-between py-3">
                 <div>
-                  <p className="font-medium">Phiếu #{pm.MaPhieuMuon} · {pm.tenDocGia}</p>
-                  <p className="text-sm text-muted-foreground">Mượn {pm.NgayMuon} · hạn {pm.HanTra}</p>
+                  <p className="font-medium">
+                    Phiếu #{pm.MaPhieuMuon} · {pm.tenDocGia}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Mượn {pm.NgayMuon} · hạn {pm.HanTra}
+                  </p>
                 </div>
-                <Badge variant={pm.trangThai === "overdue" ? "destructive" : pm.trangThai === "returned" ? "secondary" : "default"}>
-                  {pm.trangThai === "overdue" ? "Quá hạn" : pm.trangThai === "returned" ? "Đã trả" : "Đang mượn"}
+                <Badge
+                  variant={
+                    pm.trangThai === "overdue"
+                      ? "destructive"
+                      : pm.trangThai === "returned"
+                        ? "secondary"
+                        : "default"
+                  }
+                >
+                  {pm.trangThai === "overdue"
+                    ? "Quá hạn"
+                    : pm.trangThai === "returned"
+                      ? "Đã trả"
+                      : "Đang mượn"}
                 </Badge>
               </div>
             ))}
             {phieuGanDay.length === 0 && (
-              <p className="py-6 text-center text-sm text-muted-foreground">Chưa có phiếu mượn nào.</p>
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                Chưa có phiếu mượn nào.
+              </p>
             )}
           </div>
         </CardContent>

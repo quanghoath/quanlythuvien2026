@@ -20,7 +20,9 @@ export function StatCard({ label, value, icon: Icon, hint, tone = "default" }: P
   return (
     <Card className="overflow-hidden">
       <CardContent className="flex items-center gap-4 p-5">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${toneClasses[tone]}`}>
+        <div
+          className={`flex h-12 w-12 items-center justify-center rounded-lg ${toneClasses[tone]}`}
+        >
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">

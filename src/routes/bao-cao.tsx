@@ -6,14 +6,22 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useLibrary } from "@/store/libraryStore";
 import { exportToCSV } from "@/lib/export";
 
 export const Route = createFileRoute("/bao-cao")({ component: Page });
 
 const today = () => new Date().toISOString().slice(0, 10);
-const fmtMoney = (n: number) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n);
+const fmtMoney = (n: number) =>
+  new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n);
 
 function Page() {
   const { sach, docGia, phieuMuon, chiTietPhieuMuon, phieuTra, theLoai } = useLibrary();
@@ -46,11 +54,12 @@ function Page() {
   const tongPhat = useMemo(() => phieuTra.reduce((s, x) => s + x.TienPhat, 0), [phieuTra]);
 
   const sachTheoTheLoai = useMemo(
-    () => theLoai.map((c) => ({
-      name: c.TenTheLoai,
-      so: sach.filter((s) => s.MaTheLoai === c.MaTheLoai).reduce((s, b) => s + b.SoLuong, 0),
-    })),
-    [theLoai, sach]
+    () =>
+      theLoai.map((c) => ({
+        name: c.TenTheLoai,
+        so: sach.filter((s) => s.MaTheLoai === c.MaTheLoai).reduce((s, b) => s + b.SoLuong, 0),
+      })),
+    [theLoai, sach],
   );
 
   return (
@@ -58,12 +67,30 @@ function Page() {
       <PageHeader title="Báo cáo" description="Tổng hợp các chỉ số quan trọng của thư viện." />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card><CardHeader><CardTitle className="text-sm text-muted-foreground">Tổng phiếu mượn</CardTitle></CardHeader>
-          <CardContent><p className="font-display text-3xl font-semibold">{phieuMuon.length}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm text-muted-foreground">Tổng tiền phạt</CardTitle></CardHeader>
-          <CardContent><p className="font-display text-3xl font-semibold">{fmtMoney(tongPhat)}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm text-muted-foreground">Phiếu quá hạn</CardTitle></CardHeader>
-          <CardContent><p className="font-display text-3xl font-semibold text-destructive">{quaHan.length}</p></CardContent></Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">Tổng phiếu mượn</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-display text-3xl font-semibold">{phieuMuon.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">Tổng tiền phạt</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-display text-3xl font-semibold">{fmtMoney(tongPhat)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm text-muted-foreground">Phiếu quá hạn</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="font-display text-3xl font-semibold text-destructive">{quaHan.length}</p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -78,9 +105,26 @@ function Page() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topSach} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis type="number" stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
-                <YAxis dataKey="ten" type="category" stroke="var(--muted-foreground)" fontSize={11} width={160} />
-                <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }} />
+                <XAxis
+                  type="number"
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  allowDecimals={false}
+                />
+                <YAxis
+                  dataKey="ten"
+                  type="category"
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  width={160}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 8,
+                  }}
+                />
                 <Bar dataKey="luot" fill="var(--primary)" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -89,7 +133,9 @@ function Page() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Sách theo thể loại</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Sách theo thể loại</CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -97,7 +143,13 @@ function Page() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={12} />
                 <YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
-                <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }} />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 8,
+                  }}
+                />
                 <Bar dataKey="so" fill="var(--chart-2)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -108,7 +160,12 @@ function Page() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Phiếu mượn quá hạn</CardTitle>
-          <Button variant="outline" size="sm" disabled={quaHan.length === 0} onClick={() => exportToCSV("phieu-qua-han", quaHan)}>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={quaHan.length === 0}
+            onClick={() => exportToCSV("phieu-qua-han", quaHan)}
+          >
             <Download className="mr-2 h-4 w-4" /> Xuất CSV
           </Button>
         </CardHeader>
@@ -125,16 +182,24 @@ function Page() {
             </TableHeader>
             <TableBody>
               {quaHan.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">Không có phiếu quá hạn 🎉</TableCell></TableRow>
-              ) : quaHan.map((r) => (
-                <TableRow key={r.MaPhieuMuon}>
-                  <TableCell>#{r.MaPhieuMuon}</TableCell>
-                  <TableCell>{r.DocGia}</TableCell>
-                  <TableCell>{r.NgayMuon}</TableCell>
-                  <TableCell>{r.HanTra}</TableCell>
-                  <TableCell className="text-right"><Badge variant="destructive">{r.SoNgayQua} ngày</Badge></TableCell>
+                <TableRow>
+                  <TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">
+                    Không có phiếu quá hạn 🎉
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                quaHan.map((r) => (
+                  <TableRow key={r.MaPhieuMuon}>
+                    <TableCell>#{r.MaPhieuMuon}</TableCell>
+                    <TableCell>{r.DocGia}</TableCell>
+                    <TableCell>{r.NgayMuon}</TableCell>
+                    <TableCell>{r.HanTra}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="destructive">{r.SoNgayQua} ngày</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

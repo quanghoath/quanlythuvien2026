@@ -13,15 +13,22 @@ export function LoginScreen() {
   const [p, setP] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!u.trim() || !p) {
+      toast.error("Vui lòng nhập tên đăng nhập và mật khẩu");
+      return;
+    }
     setLoading(true);
-    setTimeout(() => {
-      const res = login(u, p);
-      setLoading(false);
+    try {
+      const res = await login(u.trim(), p);
       if (!res.ok) toast.error(res.message ?? "Đăng nhập thất bại");
-      else toast.success("Đăng nhập thành công");
-    }, 250);
+      else toast.success(res.message ?? "Đăng nhập thành công");
+    } catch {
+      toast.error("Không thể kết nối đến máy chủ");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,7 +54,13 @@ export function LoginScreen() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="p">Mật khẩu</Label>
-                <Input id="p" type="password" value={p} onChange={(e) => setP(e.target.value)} required />
+                <Input
+                  id="p"
+                  type="password"
+                  value={p}
+                  onChange={(e) => setP(e.target.value)}
+                  required
+                />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

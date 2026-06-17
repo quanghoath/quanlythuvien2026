@@ -17,13 +17,26 @@ function Page() {
   const [editing, setEditing] = useState<TacGia | null>(null);
   const [ten, setTen] = useState("");
 
-  const openAdd = () => { setEditing(null); setTen(""); setOpen(true); };
-  const openEdit = (r: TacGia) => { setEditing(r); setTen(r.TenTacGia); setOpen(true); };
+  const openAdd = () => {
+    setEditing(null);
+    setTen("");
+    setOpen(true);
+  };
+  const openEdit = (r: TacGia) => {
+    setEditing(r);
+    setTen(r.TenTacGia);
+    setOpen(true);
+  };
 
   const submit = () => {
     if (!ten.trim()) return toast.error("Vui lòng nhập tên tác giả");
-    if (editing) { updateTacGia(editing.MaTacGia, { TenTacGia: ten.trim() }); toast.success("Đã cập nhật"); }
-    else { addTacGia({ TenTacGia: ten.trim() }); toast.success("Đã thêm"); }
+    if (editing) {
+      updateTacGia(editing.MaTacGia, { TenTacGia: ten.trim() });
+      toast.success("Đã cập nhật");
+    } else {
+      addTacGia({ TenTacGia: ten.trim() });
+      toast.success("Đã thêm");
+    }
     setOpen(false);
   };
 
@@ -41,13 +54,23 @@ function Page() {
         searchFilter={(r, q) => r.TenTacGia.toLowerCase().includes(q)}
         onAdd={openAdd}
         onEdit={openEdit}
-        onDelete={(r) => { deleteTacGia(r.MaTacGia); toast.success("Đã xoá"); }}
-        onExport={() => exportToCSV("tac-gia", tacGia, [
-          { key: "MaTacGia", label: "Mã" },
-          { key: "TenTacGia", label: "Tên tác giả" },
-        ])}
+        onDelete={(r) => {
+          deleteTacGia(r.MaTacGia);
+          toast.success("Đã xoá");
+        }}
+        onExport={() =>
+          exportToCSV("tac-gia", tacGia, [
+            { key: "MaTacGia", label: "Mã" },
+            { key: "TenTacGia", label: "Tên tác giả" },
+          ])
+        }
       />
-      <FormDialog open={open} onOpenChange={setOpen} title={editing ? "Sửa tác giả" : "Thêm tác giả"} onSubmit={submit}>
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={editing ? "Sửa tác giả" : "Thêm tác giả"}
+        onSubmit={submit}
+      >
         <div className="space-y-2">
           <Label>Tên tác giả</Label>
           <Input value={ten} onChange={(e) => setTen(e.target.value)} autoFocus />

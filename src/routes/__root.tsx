@@ -66,11 +66,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Quản lý thư viện sách" },
-      { name: "description", content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo." },
+      {
+        name: "description",
+        content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo.",
+      },
       { property: "og:title", content: "Quản lý thư viện sách" },
       { name: "twitter:title", content: "Quản lý thư viện sách" },
-      { property: "og:description", content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo." },
-      { name: "twitter:description", content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo." },
+      {
+        property: "og:description",
+        content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo.",
+      },
+      {
+        name: "twitter:description",
+        content: "Hệ thống quản lý thư viện: sách, độc giả, mượn trả và báo cáo.",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],

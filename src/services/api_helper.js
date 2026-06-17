@@ -3,7 +3,7 @@ export const API_URL = () => {
   // const hostname = window.location.hostname;
   // if (
   //   hostname === "localhost" ||
-  //   hostname === "127.0.0.1" 
+  //   hostname === "127.0.0.1"
   // ) {
   //   // return "https://api-bms-dev.beesky.vn";
   //   return "http://api-bms.beesky.vn";
@@ -21,7 +21,7 @@ export const API_URL = () => {
   //   default:
   //     return "https://api-bms.beesky.vn";
   // }
-   return "http://123.31.12.172:6001/";
+  return "http://123.31.12.172:6001/";
 };
 const axiosApi = (headers) => {
   return axios.create({

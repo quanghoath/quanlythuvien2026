@@ -17,7 +17,11 @@ function Page() {
   const [editing, setEditing] = useState<DocGia | null>(null);
   const [form, setForm] = useState({ HoTen: "", SoDienThoai: "", DiaChi: "" });
 
-  const openAdd = () => { setEditing(null); setForm({ HoTen: "", SoDienThoai: "", DiaChi: "" }); setOpen(true); };
+  const openAdd = () => {
+    setEditing(null);
+    setForm({ HoTen: "", SoDienThoai: "", DiaChi: "" });
+    setOpen(true);
+  };
   const openEdit = (r: DocGia) => {
     setEditing(r);
     setForm({ HoTen: r.HoTen, SoDienThoai: r.SoDienThoai ?? "", DiaChi: r.DiaChi ?? "" });
@@ -26,8 +30,13 @@ function Page() {
 
   const submit = () => {
     if (!form.HoTen.trim()) return toast.error("Vui lòng nhập họ tên");
-    if (editing) { updateDocGia(editing.MaDocGia, form); toast.success("Đã cập nhật"); }
-    else { addDocGia(form); toast.success("Đã thêm"); }
+    if (editing) {
+      updateDocGia(editing.MaDocGia, form);
+      toast.success("Đã cập nhật");
+    } else {
+      addDocGia(form);
+      toast.success("Đã thêm");
+    }
     setOpen(false);
   };
 
@@ -51,27 +60,47 @@ function Page() {
         }
         onAdd={openAdd}
         onEdit={openEdit}
-        onDelete={(r) => { deleteDocGia(r.MaDocGia); toast.success("Đã xoá"); }}
-        onExport={() => exportToCSV("doc-gia", docGia, [
-          { key: "MaDocGia", label: "Mã" },
-          { key: "HoTen", label: "Họ tên" },
-          { key: "SoDienThoai", label: "SĐT" },
-          { key: "DiaChi", label: "Địa chỉ" },
-        ])}
+        onDelete={(r) => {
+          deleteDocGia(r.MaDocGia);
+          toast.success("Đã xoá");
+        }}
+        onExport={() =>
+          exportToCSV("doc-gia", docGia, [
+            { key: "MaDocGia", label: "Mã" },
+            { key: "HoTen", label: "Họ tên" },
+            { key: "SoDienThoai", label: "SĐT" },
+            { key: "DiaChi", label: "Địa chỉ" },
+          ])
+        }
       />
-      <FormDialog open={open} onOpenChange={setOpen} title={editing ? "Sửa độc giả" : "Thêm độc giả"} onSubmit={submit}>
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={editing ? "Sửa độc giả" : "Thêm độc giả"}
+        onSubmit={submit}
+      >
         <div className="grid gap-4">
           <div className="space-y-2">
             <Label>Họ tên</Label>
-            <Input value={form.HoTen} onChange={(e) => setForm({ ...form, HoTen: e.target.value })} autoFocus />
+            <Input
+              value={form.HoTen}
+              onChange={(e) => setForm({ ...form, HoTen: e.target.value })}
+              autoFocus
+            />
           </div>
           <div className="space-y-2">
             <Label>Số điện thoại</Label>
-            <Input value={form.SoDienThoai} onChange={(e) => setForm({ ...form, SoDienThoai: e.target.value })} />
+            <Input
+              value={form.SoDienThoai}
+              onChange={(e) => setForm({ ...form, SoDienThoai: e.target.value })}
+            />
           </div>
           <div className="space-y-2">
             <Label>Địa chỉ</Label>
-            <Input value={form.DiaChi} onChange={(e) => setForm({ ...form, DiaChi: e.target.value })} />
+            <Input
+              value={form.DiaChi}
+              onChange={(e) => setForm({ ...form, DiaChi: e.target.value })}
+            />
           </div>
         </div>
       </FormDialog>

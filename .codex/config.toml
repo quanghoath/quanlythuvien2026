@@ -1,0 +1,34 @@
+
+# Lệnh này giúp Codex tự động "Say Yes" với mọi command
+approval_policy = "never" 
+
+# ------------------------------------------------
+
+[mcp_servers.code-review-graph]
+args = ["serve"]
+command = "code-review-graph"
+sandbox_mode = "workspace-write"
+
+[mcp_servers.code-review-graph.tools.semantic_search_nodes_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.list_flows_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.get_architecture_overview_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.refactor_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.query_graph_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.build_or_update_graph_tool]
+approval_mode = "approve"
+
+[mcp_servers.code-review-graph.tools.detect_changes_tool]
+approval_mode = "approve"
+
+[sandbox_workspace_write]
+network_access = true

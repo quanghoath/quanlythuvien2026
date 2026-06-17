@@ -17,13 +17,26 @@ function Page() {
   const [editing, setEditing] = useState<TheLoai | null>(null);
   const [ten, setTen] = useState("");
 
-  const openAdd = () => { setEditing(null); setTen(""); setOpen(true); };
-  const openEdit = (r: TheLoai) => { setEditing(r); setTen(r.TenTheLoai); setOpen(true); };
+  const openAdd = () => {
+    setEditing(null);
+    setTen("");
+    setOpen(true);
+  };
+  const openEdit = (r: TheLoai) => {
+    setEditing(r);
+    setTen(r.TenTheLoai);
+    setOpen(true);
+  };
 
   const submit = () => {
     if (!ten.trim()) return toast.error("Vui lòng nhập tên thể loại");
-    if (editing) { updateTheLoai(editing.MaTheLoai, { TenTheLoai: ten.trim() }); toast.success("Đã cập nhật"); }
-    else { addTheLoai({ TenTheLoai: ten.trim() }); toast.success("Đã thêm"); }
+    if (editing) {
+      updateTheLoai(editing.MaTheLoai, { TenTheLoai: ten.trim() });
+      toast.success("Đã cập nhật");
+    } else {
+      addTheLoai({ TenTheLoai: ten.trim() });
+      toast.success("Đã thêm");
+    }
     setOpen(false);
   };
 
@@ -37,18 +50,33 @@ function Page() {
         columns={[
           { key: "id", header: "Mã", render: (r) => r.MaTheLoai, className: "w-20" },
           { key: "ten", header: "Tên thể loại", render: (r) => r.TenTheLoai },
-          { key: "count", header: "Số đầu sách", render: (r) => sach.filter((s) => s.MaTheLoai === r.MaTheLoai).length, className: "w-32" },
+          {
+            key: "count",
+            header: "Số đầu sách",
+            render: (r) => sach.filter((s) => s.MaTheLoai === r.MaTheLoai).length,
+            className: "w-32",
+          },
         ]}
         searchFilter={(r, q) => r.TenTheLoai.toLowerCase().includes(q)}
         onAdd={openAdd}
         onEdit={openEdit}
-        onDelete={(r) => { deleteTheLoai(r.MaTheLoai); toast.success("Đã xoá"); }}
-        onExport={() => exportToCSV("the-loai", theLoai, [
-          { key: "MaTheLoai", label: "Mã" },
-          { key: "TenTheLoai", label: "Tên thể loại" },
-        ])}
+        onDelete={(r) => {
+          deleteTheLoai(r.MaTheLoai);
+          toast.success("Đã xoá");
+        }}
+        onExport={() =>
+          exportToCSV("the-loai", theLoai, [
+            { key: "MaTheLoai", label: "Mã" },
+            { key: "TenTheLoai", label: "Tên thể loại" },
+          ])
+        }
       />
-      <FormDialog open={open} onOpenChange={setOpen} title={editing ? "Sửa thể loại" : "Thêm thể loại"} onSubmit={submit}>
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={editing ? "Sửa thể loại" : "Thêm thể loại"}
+        onSubmit={submit}
+      >
         <div className="space-y-2">
           <Label>Tên thể loại</Label>
           <Input value={ten} onChange={(e) => setTen(e.target.value)} autoFocus />

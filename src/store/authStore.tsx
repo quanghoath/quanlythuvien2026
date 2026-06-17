@@ -1,12 +1,13 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import type { TaiKhoan } from "@/types/library";
-import { mockTaiKhoan } from "@/data/mockData";
+import apiClient from "@/api/client";
 
-const STORAGE_KEY = "library_current_user_id";
+const TOKEN_KEY = "token";
+const USER_KEY = "library_user";
 
 type AuthContextValue = {
   currentUser: TaiKhoan | null;
-  login: (tenDangNhap: string, matKhau: string) => { ok: boolean; message?: string };
+  login: (tenDangNhap: string, matKhau: string) => Promise<{ ok: boolean; message?: string }>;
   logout: () => void;
 };
 
@@ -18,10 +19,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const id = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-      if (id) {
-        const u = mockTaiKhoan.find((x) => x.MaTaiKhoan === Number(id));
-        if (u) setCurrentUser(u);
+      const token = sessionStorage.getItem(TOKEN_KEY);
+      if (token) {
+        const raw = sessionStorage.getItem(USER_KEY);
+        if (raw) {
+          const u = JSON.parse(raw) as TaiKhoan;
+          setCurrentUser(u);
+        }
       }
     } catch {
       /* noop */
@@ -29,28 +33,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
-  const login = (tenDangNhap: string, matKhau: string) => {
-    const u = mockTaiKhoan.find(
-      (x) => x.TenDangNhap.toLowerCase() === tenDangNhap.trim().toLowerCase() && x.MatKhau === matKhau
-    );
-    if (!u) return { ok: false, message: "Tên đăng nhập hoặc mật khẩu không đúng." };
-    setCurrentUser(u);
+  const login = useCallback(async (tenDangNhap: string, matKhau: string) => {
     try {
-      localStorage.setItem(STORAGE_KEY, String(u.MaTaiKhoan));
-    } catch {
-      /* noop */
+      const { data } = await apiClient.post("/api/login", {
+        tenDangNhap: tenDangNhap.trim(),
+        password: matKhau,
+      });
+      if (data.status === 2000) {
+        sessionStorage.setItem(TOKEN_KEY, data.acessToken);
+        sessionStorage.setItem(USER_KEY, JSON.stringify(data.data));
+        setCurrentUser(data.data);
+        return { ok: true, message: data.message };
+      }
+      return { ok: false, message: data.message ?? "Đăng nhập thất bại" };
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        "Không thể kết nối đến máy chủ";
+      return { ok: false, message: msg };
     }
-    return { ok: true };
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_KEY);
     setCurrentUser(null);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* noop */
-    }
-  };
+  }, []);
 
   if (!ready) return null;
 

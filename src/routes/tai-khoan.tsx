@@ -5,7 +5,13 @@ import { CrudPage } from "@/components/shared/CrudPage";
 import { FormDialog } from "@/components/shared/FormDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { exportToCSV } from "@/lib/export";
 import { toast } from "sonner";
 import type { TaiKhoan } from "@/types/library";
@@ -25,7 +31,12 @@ function Page() {
   };
   const openEdit = (r: TaiKhoan) => {
     setEditing(r);
-    setForm({ TenDangNhap: r.TenDangNhap, MatKhau: r.MatKhau, HoTen: r.HoTen, MaVaiTro: r.MaVaiTro });
+    setForm({
+      TenDangNhap: r.TenDangNhap,
+      MatKhau: r.MatKhau,
+      HoTen: r.HoTen,
+      MaVaiTro: r.MaVaiTro,
+    });
     setOpen(true);
   };
 
@@ -55,40 +66,81 @@ function Page() {
           { key: "id", header: "Mã", render: (r) => r.MaTaiKhoan, className: "w-16" },
           { key: "u", header: "Tên đăng nhập", render: (r) => r.TenDangNhap },
           { key: "h", header: "Họ tên", render: (r) => r.HoTen },
-          { key: "v", header: "Vai trò", render: (r) => vaiTro.find((x) => x.MaVaiTro === r.MaVaiTro)?.TenVaiTro ?? "—" },
+          {
+            key: "v",
+            header: "Vai trò",
+            render: (r) => vaiTro.find((x) => x.MaVaiTro === r.MaVaiTro)?.TenVaiTro ?? "—",
+          },
         ]}
-        searchFilter={(r, q) => r.TenDangNhap.toLowerCase().includes(q) || r.HoTen.toLowerCase().includes(q)}
+        searchFilter={(r, q) =>
+          r.TenDangNhap.toLowerCase().includes(q) || r.HoTen.toLowerCase().includes(q)
+        }
         onAdd={openAdd}
         onEdit={openEdit}
-        onDelete={(r) => { deleteTaiKhoan(r.MaTaiKhoan); toast.success("Đã xoá"); }}
-        onExport={() => exportToCSV("tai-khoan", taiKhoan.map((t) => ({
-          MaTaiKhoan: t.MaTaiKhoan,
-          TenDangNhap: t.TenDangNhap,
-          HoTen: t.HoTen,
-          VaiTro: vaiTro.find((v) => v.MaVaiTro === t.MaVaiTro)?.TenVaiTro ?? "",
-        })))}
+        onDelete={(r) => {
+          deleteTaiKhoan(r.MaTaiKhoan);
+          toast.success("Đã xoá");
+        }}
+        onExport={() =>
+          exportToCSV(
+            "tai-khoan",
+            taiKhoan.map((t) => ({
+              MaTaiKhoan: t.MaTaiKhoan,
+              TenDangNhap: t.TenDangNhap,
+              HoTen: t.HoTen,
+              VaiTro: vaiTro.find((v) => v.MaVaiTro === t.MaVaiTro)?.TenVaiTro ?? "",
+            })),
+          )
+        }
       />
-      <FormDialog open={open} onOpenChange={setOpen} title={editing ? "Sửa tài khoản" : "Thêm tài khoản"} onSubmit={submit}>
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={editing ? "Sửa tài khoản" : "Thêm tài khoản"}
+        onSubmit={submit}
+      >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Tên đăng nhập</Label>
-            <Input value={form.TenDangNhap} onChange={(e) => setForm({ ...form, TenDangNhap: e.target.value })} />
+            <Input
+              value={form.TenDangNhap}
+              onChange={(e) => setForm({ ...form, TenDangNhap: e.target.value })}
+            />
           </div>
           <div className="space-y-2">
-            <Label>Mật khẩu {editing && <span className="text-xs text-muted-foreground">(để trống = giữ nguyên)</span>}</Label>
-            <Input type="password" value={form.MatKhau} onChange={(e) => setForm({ ...form, MatKhau: e.target.value })} />
+            <Label>
+              Mật khẩu{" "}
+              {editing && (
+                <span className="text-xs text-muted-foreground">(để trống = giữ nguyên)</span>
+              )}
+            </Label>
+            <Input
+              type="password"
+              value={form.MatKhau}
+              onChange={(e) => setForm({ ...form, MatKhau: e.target.value })}
+            />
           </div>
           <div className="col-span-2 space-y-2">
             <Label>Họ tên</Label>
-            <Input value={form.HoTen} onChange={(e) => setForm({ ...form, HoTen: e.target.value })} />
+            <Input
+              value={form.HoTen}
+              onChange={(e) => setForm({ ...form, HoTen: e.target.value })}
+            />
           </div>
           <div className="col-span-2 space-y-2">
             <Label>Vai trò</Label>
-            <Select value={String(form.MaVaiTro)} onValueChange={(v) => setForm({ ...form, MaVaiTro: Number(v) })}>
-              <SelectTrigger><SelectValue placeholder="Chọn vai trò" /></SelectTrigger>
+            <Select
+              value={String(form.MaVaiTro)}
+              onValueChange={(v) => setForm({ ...form, MaVaiTro: Number(v) })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn vai trò" />
+              </SelectTrigger>
               <SelectContent>
                 {vaiTro.map((v) => (
-                  <SelectItem key={v.MaVaiTro} value={String(v.MaVaiTro)}>{v.TenVaiTro}</SelectItem>
+                  <SelectItem key={v.MaVaiTro} value={String(v.MaVaiTro)}>
+                    {v.TenVaiTro}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

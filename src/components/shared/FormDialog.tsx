@@ -1,5 +1,11 @@
 import { useState, type ReactNode } from "react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 type Props = {
@@ -11,7 +17,14 @@ type Props = {
   submitLabel?: string;
 };
 
-export function FormDialog({ open, onOpenChange, title, onSubmit, children, submitLabel = "Lưu" }: Props) {
+export function FormDialog({
+  open,
+  onOpenChange,
+  title,
+  onSubmit,
+  children,
+  submitLabel = "Lưu",
+}: Props) {
   const [busy, setBusy] = useState(false);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

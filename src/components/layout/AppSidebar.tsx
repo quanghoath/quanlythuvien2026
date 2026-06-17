@@ -49,7 +49,8 @@ const heThong = [
 
 export function AppSidebar() {
   const currentPath = useRouterState({ select: (s) => s.location.pathname });
-  const isActive = (path: string) => (path === "/" ? currentPath === "/" : currentPath.startsWith(path));
+  const isActive = (path: string) =>
+    path === "/" ? currentPath === "/" : currentPath.startsWith(path);
   const { currentUser, logout } = useAuth();
   const { vaiTro } = useLibrary();
   const role = vaiTro.find((v) => v.MaVaiTro === currentUser?.MaVaiTro)?.TenVaiTro ?? "";

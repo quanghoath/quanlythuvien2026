@@ -1,4 +1,12 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
 import type {
   ChiTietPhieuMuon,
   DocGia,
@@ -23,6 +31,14 @@ import {
   mockTheLoai,
   mockVaiTro,
 } from "@/data/mockData";
+import { sachApi } from "@/api/sach";
+import { tacgiaApi } from "@/api/tacgia";
+import { theloaiApi } from "@/api/theloai";
+import { docgiaApi } from "@/api/docgia";
+import { phieumuonApi } from "@/api/phieumuon";
+import { phieutraApi } from "@/api/phieutra";
+import { nhatkyApi } from "@/api/nhatky";
+import { taikhoanApi } from "@/api/taikhoan";
 
 type LibraryContextValue = {
   vaiTro: VaiTro[];
@@ -36,55 +52,48 @@ type LibraryContextValue = {
   phieuTra: PhieuTra[];
   nhatKySach: NhatKySach[];
 
-  // VaiTro
   addVaiTro: (v: Omit<VaiTro, "MaVaiTro">) => void;
   updateVaiTro: (id: number, v: Partial<VaiTro>) => void;
   deleteVaiTro: (id: number) => void;
 
-  // TaiKhoan
-  addTaiKhoan: (v: Omit<TaiKhoan, "MaTaiKhoan">) => void;
-  updateTaiKhoan: (id: number, v: Partial<TaiKhoan>) => void;
-  deleteTaiKhoan: (id: number) => void;
+  addTaiKhoan: (v: Omit<TaiKhoan, "MaTaiKhoan">) => Promise<void>;
+  updateTaiKhoan: (id: number, v: Partial<TaiKhoan>) => Promise<void>;
+  deleteTaiKhoan: (id: number) => Promise<void>;
 
-  // TacGia
-  addTacGia: (v: Omit<TacGia, "MaTacGia">) => void;
-  updateTacGia: (id: number, v: Partial<TacGia>) => void;
-  deleteTacGia: (id: number) => void;
+  addTacGia: (v: Omit<TacGia, "MaTacGia">) => Promise<void>;
+  updateTacGia: (id: number, v: Partial<TacGia>) => Promise<void>;
+  deleteTacGia: (id: number) => Promise<void>;
 
-  // TheLoai
-  addTheLoai: (v: Omit<TheLoai, "MaTheLoai">) => void;
-  updateTheLoai: (id: number, v: Partial<TheLoai>) => void;
-  deleteTheLoai: (id: number) => void;
+  addTheLoai: (v: Omit<TheLoai, "MaTheLoai">) => Promise<void>;
+  updateTheLoai: (id: number, v: Partial<TheLoai>) => Promise<void>;
+  deleteTheLoai: (id: number) => Promise<void>;
 
-  // Sach
-  addSach: (v: Omit<Sach, "MaSach" | "SoLuongCon"> & { SoLuongCon?: number }) => void;
-  updateSach: (id: number, v: Partial<Sach>) => void;
-  deleteSach: (id: number) => void;
+  addSach: (v: Omit<Sach, "MaSach" | "SoLuongCon"> & { SoLuongCon?: number }) => Promise<void>;
+  updateSach: (id: number, v: Partial<Sach>) => Promise<void>;
+  deleteSach: (id: number) => Promise<void>;
 
-  // DocGia
-  addDocGia: (v: Omit<DocGia, "MaDocGia">) => void;
-  updateDocGia: (id: number, v: Partial<DocGia>) => void;
-  deleteDocGia: (id: number) => void;
+  addDocGia: (v: Omit<DocGia, "MaDocGia">) => Promise<void>;
+  updateDocGia: (id: number, v: Partial<DocGia>) => Promise<void>;
+  deleteDocGia: (id: number) => Promise<void>;
 
-  // PhieuMuon
   addPhieuMuon: (
     v: Omit<PhieuMuon, "MaPhieuMuon">,
-    chiTiet: { MaSach: number; SoLuong: number }[]
-  ) => void;
+    chiTiet: { MaSach: number; SoLuong: number }[],
+  ) => Promise<void>;
   updatePhieuMuon: (
     id: number,
     v: Partial<PhieuMuon>,
-    chiTiet?: { MaSach: number; SoLuong: number }[]
-  ) => void;
-  deletePhieuMuon: (id: number) => void;
+    chiTiet?: { MaSach: number; SoLuong: number }[],
+  ) => Promise<void>;
+  deletePhieuMuon: (id: number) => Promise<void>;
 
-  // PhieuTra
-  addPhieuTra: (v: Omit<PhieuTra, "MaPhieuTra">) => void;
-  updatePhieuTra: (id: number, v: Partial<PhieuTra>) => void;
-  deletePhieuTra: (id: number) => void;
+  addPhieuTra: (v: Omit<PhieuTra, "MaPhieuTra">) => Promise<void>;
+  updatePhieuTra: (id: number, v: Partial<PhieuTra>) => Promise<void>;
+  deletePhieuTra: (id: number) => Promise<void>;
 
-  // NhatKySach
-  deleteNhatKy: (id: number) => void;
+  deleteNhatKy: (id: number) => Promise<void>;
+
+  refetchAll: () => Promise<void>;
 };
 
 const LibraryContext = createContext<LibraryContextValue | null>(null);
@@ -105,6 +114,44 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const [phieuTra, setPhieuTra] = useState<PhieuTra[]>(mockPhieuTra);
   const [nhatKySach, setNhatKy] = useState<NhatKySach[]>(mockNhatKySach);
 
+  const refetchAll = useCallback(async () => {
+    try {
+      const [sRes, tgRes, tlRes, dgRes, pmRes, ptRes, nkRes, tkRes] =
+        await Promise.allSettled([
+          sachApi.getAll(),
+          tacgiaApi.getAll(),
+          theloaiApi.getAll(),
+          docgiaApi.getAll(),
+          phieumuonApi.getAll(),
+          phieutraApi.getAll(),
+          nhatkyApi.getAll(),
+          taikhoanApi.getAll(),
+        ]);
+      if (sRes.status === "fulfilled" && sRes.value.data.status === 2000)
+        setSach(sRes.value.data.data);
+      if (tgRes.status === "fulfilled" && tgRes.value.data.status === 2000)
+        setTacGia(tgRes.value.data.data);
+      if (tlRes.status === "fulfilled" && tlRes.value.data.status === 2000)
+        setTheLoai(tlRes.value.data.data);
+      if (dgRes.status === "fulfilled" && dgRes.value.data.status === 2000)
+        setDocGia(dgRes.value.data.data);
+      if (pmRes.status === "fulfilled" && pmRes.value.data.status === 2000)
+        setPhieuMuon(pmRes.value.data.data);
+      if (ptRes.status === "fulfilled" && ptRes.value.data.status === 2000)
+        setPhieuTra(ptRes.value.data.data);
+      if (nkRes.status === "fulfilled" && nkRes.value.data.status === 2000)
+        setNhatKy(nkRes.value.data.data);
+      if (tkRes.status === "fulfilled" && tkRes.value.data.status === 2000)
+        setTaiKhoan(tkRes.value.data.data);
+    } catch {
+      // Fall back to mock data
+    }
+  }, []);
+
+  useEffect(() => {
+    refetchAll();
+  }, [refetchAll]);
+
   const value = useMemo<LibraryContextValue>(
     () => ({
       vaiTro,
@@ -117,34 +164,103 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       chiTietPhieuMuon,
       phieuTra,
       nhatKySach,
+      refetchAll,
 
       addVaiTro: (v) => setVaiTro((p) => [...p, { ...v, MaVaiTro: nextId(p, "MaVaiTro") }]),
-      updateVaiTro: (id, v) => setVaiTro((p) => p.map((x) => (x.MaVaiTro === id ? { ...x, ...v } : x))),
+      updateVaiTro: (id, v) =>
+        setVaiTro((p) => p.map((x) => (x.MaVaiTro === id ? { ...x, ...v } : x))),
       deleteVaiTro: (id) => setVaiTro((p) => p.filter((x) => x.MaVaiTro !== id)),
 
-      addTaiKhoan: (v) => setTaiKhoan((p) => [...p, { ...v, MaTaiKhoan: nextId(p, "MaTaiKhoan") }]),
-      updateTaiKhoan: (id, v) =>
-        setTaiKhoan((p) => p.map((x) => (x.MaTaiKhoan === id ? { ...x, ...v } : x))),
-      deleteTaiKhoan: (id) => setTaiKhoan((p) => p.filter((x) => x.MaTaiKhoan !== id)),
+      addTaiKhoan: async (v) => {
+        const { data } = await taikhoanApi.createOrUpdate({
+          tenTaiKhoan: v.TenDangNhap,
+          hoTen: v.HoTen,
+          matKhau: v.MatKhau,
+          maVaiTro: v.MaVaiTro,
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      updateTaiKhoan: async (id, v) => {
+        const { data } = await taikhoanApi.createOrUpdate({
+          maTaiKhoan: id,
+          tenTaiKhoan: v.TenDangNhap ?? "",
+          hoTen: v.HoTen ?? "",
+          matKhau: v.MatKhau ?? "",
+          maVaiTro: v.MaVaiTro ?? 0,
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      deleteTaiKhoan: async (id) => {
+        const { data } = await taikhoanApi.remove(id);
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
 
-      addTacGia: (v) => setTacGia((p) => [...p, { ...v, MaTacGia: nextId(p, "MaTacGia") }]),
-      updateTacGia: (id, v) => setTacGia((p) => p.map((x) => (x.MaTacGia === id ? { ...x, ...v } : x))),
-      deleteTacGia: (id) => setTacGia((p) => p.filter((x) => x.MaTacGia !== id)),
+      addTacGia: async (v) => {
+        const { data } = await tacgiaApi.createOrUpdate({ tenTacGia: v.TenTacGia });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      updateTacGia: async (id, v) => {
+        const { data } = await tacgiaApi.createOrUpdate({
+          maTacGia: id,
+          tenTacGia: v.TenTacGia ?? "",
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      deleteTacGia: async (id) => {
+        const { data } = await tacgiaApi.remove(id);
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
 
-      addTheLoai: (v) => setTheLoai((p) => [...p, { ...v, MaTheLoai: nextId(p, "MaTheLoai") }]),
-      updateTheLoai: (id, v) =>
-        setTheLoai((p) => p.map((x) => (x.MaTheLoai === id ? { ...x, ...v } : x))),
-      deleteTheLoai: (id) => setTheLoai((p) => p.filter((x) => x.MaTheLoai !== id)),
+      addTheLoai: async (v) => {
+        const { data } = await theloaiApi.createOrUpdate({ tenTheLoai: v.TenTheLoai });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      updateTheLoai: async (id, v) => {
+        const { data } = await theloaiApi.createOrUpdate({
+          maTheLoai: id,
+          tenTheLoai: v.TenTheLoai ?? "",
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      deleteTheLoai: async (id) => {
+        const { data } = await theloaiApi.remove(id);
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
 
-      addSach: (v) =>
-        setSach((p) => {
-          const newId = nextId(p, "MaSach");
-          const SoLuongCon = v.SoLuongCon ?? v.SoLuong;
-          return [...p, { ...v, MaSach: newId, SoLuongCon }];
-        }),
-      updateSach: (id, v) =>
-        setSach((p) => {
-          const old = p.find((x) => x.MaSach === id);
+      addSach: async (v) => {
+        const { data } = await sachApi.createOrUpdate({
+          maSach: null,
+          tenSach: v.TenSach,
+          maTacGia: v.MaTacGia,
+          maTheLoai: v.MaTheLoai,
+          namXuatBan: v.NamXuatBan ?? new Date().getFullYear(),
+          soLuong: v.SoLuong,
+          soLuongCon: v.SoLuongCon ?? v.SoLuong,
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      updateSach: async (id, v) => {
+        const old = sach.find((x) => x.MaSach === id);
+        const { data } = await sachApi.createOrUpdate({
+          maSach: id,
+          tenSach: v.TenSach ?? old?.TenSach ?? "",
+          maTacGia: v.MaTacGia ?? old?.MaTacGia ?? 0,
+          maTheLoai: v.MaTheLoai ?? old?.MaTheLoai ?? 0,
+          namXuatBan: v.NamXuatBan ?? old?.NamXuatBan ?? new Date().getFullYear(),
+          soLuong: v.SoLuong ?? old?.SoLuong ?? 0,
+          soLuongCon: v.SoLuongCon ?? old?.SoLuongCon ?? 0,
+        });
+        if (data.status === 2000) {
           if (old && v.TenSach && v.TenSach !== old.TenSach) {
             setNhatKy((nk) => [
               ...nk,
@@ -157,115 +273,95 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
               },
             ]);
           }
-          return p.map((x) => (x.MaSach === id ? { ...x, ...v } : x));
-        }),
-      deleteSach: (id) => setSach((p) => p.filter((x) => x.MaSach !== id)),
+          await refetchAll();
+        } else throw new Error(data.message);
+      },
+      deleteSach: async (id) => {
+        const { data } = await sachApi.remove(id);
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
 
-      addDocGia: (v) => setDocGia((p) => [...p, { ...v, MaDocGia: nextId(p, "MaDocGia") }]),
-      updateDocGia: (id, v) =>
-        setDocGia((p) => p.map((x) => (x.MaDocGia === id ? { ...x, ...v } : x))),
-      deleteDocGia: (id) => setDocGia((p) => p.filter((x) => x.MaDocGia !== id)),
-
-      addPhieuMuon: (v, ct) => {
-        setPhieuMuon((p) => {
-          const newId = nextId(p, "MaPhieuMuon");
-          setChiTiet((cts) => {
-            let nid = nextId(cts, "MaChiTiet");
-            const added = ct.map((c) => ({
-              MaChiTiet: nid++,
-              MaPhieuMuon: newId,
-              MaSach: c.MaSach,
-              SoLuong: c.SoLuong,
-            }));
-            return [...cts, ...added];
-          });
-          // trừ SoLuongCon
-          setSach((sks) =>
-            sks.map((s) => {
-              const found = ct.find((c) => c.MaSach === s.MaSach);
-              return found ? { ...s, SoLuongCon: Math.max(0, s.SoLuongCon - found.SoLuong) } : s;
-            })
-          );
-          return [...p, { ...v, MaPhieuMuon: newId }];
+      addDocGia: async (v) => {
+        const { data } = await docgiaApi.createOrUpdate({
+          hoTen: v.HoTen,
+          soDienThoai: v.SoDienThoai ?? "",
+          diaChi: v.DiaChi ?? "",
         });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
       },
-      updatePhieuMuon: (id, v, ct) => {
-        setPhieuMuon((p) => p.map((x) => (x.MaPhieuMuon === id ? { ...x, ...v } : x)));
-        if (ct) {
-          // hoàn lại số lượng cũ
-          setChiTiet((cts) => {
-            const oldDetails = cts.filter((c) => c.MaPhieuMuon === id);
-            setSach((sks) =>
-              sks.map((s) => {
-                const old = oldDetails.find((c) => c.MaSach === s.MaSach);
-                const nw = ct.find((c) => c.MaSach === s.MaSach);
-                let SoLuongCon = s.SoLuongCon;
-                if (old) SoLuongCon += old.SoLuong;
-                if (nw) SoLuongCon -= nw.SoLuong;
-                SoLuongCon = Math.max(0, Math.min(s.SoLuong, SoLuongCon));
-                return { ...s, SoLuongCon };
-              })
-            );
-            const remain = cts.filter((c) => c.MaPhieuMuon !== id);
-            let nid = nextId(cts, "MaChiTiet");
-            const added = ct.map((c) => ({
-              MaChiTiet: nid++,
-              MaPhieuMuon: id,
-              MaSach: c.MaSach,
-              SoLuong: c.SoLuong,
-            }));
-            return [...remain, ...added];
-          });
-        }
+      updateDocGia: async (id, v) => {
+        const old = docGia.find((x) => x.MaDocGia === id);
+        const { data } = await docgiaApi.createOrUpdate({
+          maDocGia: id,
+          hoTen: v.HoTen ?? old?.HoTen ?? "",
+          soDienThoai: v.SoDienThoai ?? old?.SoDienThoai ?? "",
+          diaChi: v.DiaChi ?? old?.DiaChi ?? "",
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
       },
-      deletePhieuMuon: (id) => {
-        // hoàn lại số lượng nếu chưa có phiếu trả
-        const hasReturn = phieuTra.some((pt) => pt.MaPhieuMuon === id);
-        if (!hasReturn) {
-          const details = chiTietPhieuMuon.filter((c) => c.MaPhieuMuon === id);
-          setSach((sks) =>
-            sks.map((s) => {
-              const d = details.find((c) => c.MaSach === s.MaSach);
-              return d
-                ? { ...s, SoLuongCon: Math.min(s.SoLuong, s.SoLuongCon + d.SoLuong) }
-                : s;
-            })
-          );
-        }
-        setChiTiet((p) => p.filter((c) => c.MaPhieuMuon !== id));
-        setPhieuTra((p) => p.filter((pt) => pt.MaPhieuMuon !== id));
-        setPhieuMuon((p) => p.filter((x) => x.MaPhieuMuon !== id));
+      deleteDocGia: async (id) => {
+        const { data } = await docgiaApi.remove(id);
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
       },
 
-      addPhieuTra: (v) => {
-        setPhieuTra((p) => [...p, { ...v, MaPhieuTra: nextId(p, "MaPhieuTra") }]);
-        const details = chiTietPhieuMuon.filter((c) => c.MaPhieuMuon === v.MaPhieuMuon);
-        setSach((sks) =>
-          sks.map((s) => {
-            const d = details.find((c) => c.MaSach === s.MaSach);
-            return d ? { ...s, SoLuongCon: Math.min(s.SoLuong, s.SoLuongCon + d.SoLuong) } : s;
-          })
-        );
+      addPhieuMuon: async (v, ct) => {
+        const { data } = await phieumuonApi.create({
+          maDocGia: v.MaDocGia,
+          ngayMuon: v.NgayMuon,
+          hanTra: v.HanTra,
+          danhSach: ct.map((c) => ({ maSach: c.MaSach, soLuong: c.SoLuong })),
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
       },
-      updatePhieuTra: (id, v) =>
-        setPhieuTra((p) => p.map((x) => (x.MaPhieuTra === id ? { ...x, ...v } : x))),
-      deletePhieuTra: (id) => {
-        const pt = phieuTra.find((x) => x.MaPhieuTra === id);
-        if (pt) {
-          const details = chiTietPhieuMuon.filter((c) => c.MaPhieuMuon === pt.MaPhieuMuon);
-          setSach((sks) =>
-            sks.map((s) => {
-              const d = details.find((c) => c.MaSach === s.MaSach);
-              return d ? { ...s, SoLuongCon: Math.max(0, s.SoLuongCon - d.SoLuong) } : s;
-            })
-          );
-        }
-        setPhieuTra((p) => p.filter((x) => x.MaPhieuTra !== id));
+      updatePhieuMuon: async () => {
+        throw new Error("Không hỗ trợ sửa phiếu mượn");
+      },
+      deletePhieuMuon: async (id) => {
+        const { data } = await phieumuonApi.remove(id);
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
       },
 
-      deleteNhatKy: (id) => setNhatKy((p) => p.filter((x) => x.MaNhatKy !== id)),
+      addPhieuTra: async (v) => {
+        const pm = phieuMuon.find((x) => x.MaPhieuMuon === v.MaPhieuMuon);
+        const { data } = await phieutraApi.createOrUpdate({
+          maPhieuMuon: v.MaPhieuMuon,
+          maDocGia: pm?.MaDocGia ?? 0,
+          ngayTra: v.NgayTra,
+          tienPhat: v.TienPhat,
+        });
+        if (data.status === 2000) await refetchAll();
+        else throw new Error(data.message);
+      },
+      updatePhieuTra: async () => {
+        throw new Error("Không hỗ trợ sửa phiếu trả");
+      },
+      deletePhieuTra: async () => {
+        throw new Error("Không được phép xoá phiếu trả");
+      },
+
+      deleteNhatKy: async () => {
+        // NhatKy is read-only from API
+      },
     }),
-    [vaiTro, taiKhoan, tacGia, theLoai, sach, docGia, phieuMuon, chiTietPhieuMuon, phieuTra, nhatKySach]
+    [
+      vaiTro,
+      taiKhoan,
+      tacGia,
+      theLoai,
+      sach,
+      docGia,
+      phieuMuon,
+      chiTietPhieuMuon,
+      phieuTra,
+      nhatKySach,
+      refetchAll,
+    ],
   );
 
   return <LibraryContext.Provider value={value}>{children}</LibraryContext.Provider>;

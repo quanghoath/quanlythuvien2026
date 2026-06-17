@@ -2,7 +2,14 @@ import { useState, type ReactNode } from "react";
 import { Plus, Pencil, Trash2, Download, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { PageHeader } from "@/components/layout/PageHeader";
 
@@ -43,7 +50,8 @@ export function CrudPage<T>({
   const [q, setQ] = useState("");
   const [toDelete, setToDelete] = useState<T | null>(null);
 
-  const filtered = searchFilter && q.trim() ? data.filter((r) => searchFilter(r, q.trim().toLowerCase())) : data;
+  const filtered =
+    searchFilter && q.trim() ? data.filter((r) => searchFilter(r, q.trim().toLowerCase())) : data;
 
   return (
     <div className="space-y-6">
@@ -70,7 +78,12 @@ export function CrudPage<T>({
       {searchFilter && (
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Tìm kiếm..." value={q} onChange={(e) => setQ(e.target.value)} className="pl-9" />
+          <Input
+            placeholder="Tìm kiếm..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="pl-9"
+          />
         </div>
       )}
 
@@ -89,7 +102,10 @@ export function CrudPage<T>({
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + 1} className="py-10 text-center text-sm text-muted-foreground">
+                <TableCell
+                  colSpan={columns.length + 1}
+                  className="py-10 text-center text-sm text-muted-foreground"
+                >
                   Không có dữ liệu
                 </TableCell>
               </TableRow>
