@@ -62,11 +62,27 @@ export type ChiTietPhieuMuon = {
   SoLuong: number;
 };
 
+export type PhieuMuonState = "NEW" | "RETURNED" | "OVERDUE" | string;
+
 export type PhieuMuon = {
   MaPhieuMuon: number;
-  MaDocGia: number;
-  NgayMuon: string; // YYYY-MM-DD
+  MaDocGia?: number;
+  TenDocGia?: string | number;
+  NgayMuon: string; // ISO datetime
   HanTra: string;
+  State?: PhieuMuonState;
+  SoLuongSach?: number;
+};
+
+export type PhieuMuonChiTietItem = {
+  MaSach: number;
+  TenSach?: string;
+  SoLuong: number;
+};
+
+export type PhieuMuonDetail = {
+  data: PhieuMuon;
+  details: PhieuMuonChiTietItem[];
 };
 
 export type PhieuTra = {
