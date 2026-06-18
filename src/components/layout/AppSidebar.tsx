@@ -39,8 +39,8 @@ const nghiepVu = [
   { title: "Phiếu mượn", url: "/phieu-muon", icon: BookMarked },
   { title: "Phiếu trả", url: "/phieu-tra", icon: RotateCcw },
   { title: "Nhật ký sách", url: "/nhat-ky-sach", icon: History },
-  { title: "Báo cáo", url: "/bao-cao", icon: BarChart3 },
 ];
+
 
 const heThong = [
   { title: "Tài khoản", url: "/tai-khoan", icon: UserCog },
