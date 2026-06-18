@@ -47,10 +47,13 @@ const fmtDate = (s?: string) => (s ? s.slice(0, 10) : "—");
 
 type LineItem = { MaSach: number; SoLuong: number };
 
-const stateLabel = (s?: string) => {
+const stateLabel = (s?: string, hanTra?: string) => {
+  const isOverdue = !!hanTra && hanTra.slice(0, 10) < today();
+  if (s === "NEW" && isOverdue) return { text: "Quá hạn", variant: "destructive" as const };
   switch (s) {
     case "NEW":
       return { text: "Đang mượn", variant: "default" as const };
+    case "DONE":
     case "RETURNED":
       return { text: "Đã trả", variant: "secondary" as const };
     case "OVERDUE":
@@ -59,6 +62,7 @@ const stateLabel = (s?: string) => {
       return { text: s ?? "—", variant: "outline" as const };
   }
 };
+
 
 function Page() {
   const { phieuMuon, docGia, sach, addPhieuMuon, deletePhieuMuon } = useLibrary();
@@ -134,9 +138,10 @@ function Page() {
             key: "tt",
             header: "Trạng thái",
             render: (r) => {
-              const { text, variant } = stateLabel(r.State);
+              const { text, variant } = stateLabel(r.State, r.HanTra);
               return <Badge variant={variant}>{text}</Badge>;
             },
+
             className: "w-32",
           },
         ]}
@@ -296,9 +301,10 @@ function Page() {
                 </div>
                 <div>
                   <span className="text-muted-foreground">Trạng thái:</span>{" "}
-                  <Badge variant={stateLabel(viewData.pm?.State).variant}>
-                    {stateLabel(viewData.pm?.State).text}
+                  <Badge variant={stateLabel(viewData.pm?.State, viewData.pm?.HanTra).variant}>
+                    {stateLabel(viewData.pm?.State, viewData.pm?.HanTra).text}
                   </Badge>
+
                 </div>
                 <div>
                   <span className="text-muted-foreground">Ngày mượn:</span>{" "}
