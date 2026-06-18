@@ -117,27 +117,37 @@ export type LoginResponse = {
 
 // ===== Báo cáo =====
 export type BaoCaoRp1 = {
-  tenTheLoai: string;
-  soLuongSach: number;
-  soLuotMuon: number;
+  TongDauSach: number;
+  TongSoSach: number;
+  DangCoSan: number;
+  TongDocGia: number;
+  PhieuQuaHan: number;
 };
 
 export type BaoCaoRp2 = {
-  tenSach: string;
-  tenTacGia: string;
-  soLuotMuon: number;
+  Thang: number;
+  Nam: number;
+  SoLuong: number;
 };
 
 export type BaoCaoRp3 = {
-  tenDocGia: string;
-  soLuotMuon: number;
+  TenTheLoai: string;
+  SoLuong: number;
 };
 
 export type BaoCaoRp4 = {
-  thang: string;
-  soLuotMuon: number;
-  soLuotTra: number;
+  TenSach: string;
+  TongLuotMuon: number;
 };
+
+export type BaoCaoRp5 = {
+  MaPhieuMuon: number;
+  HoTen: string;
+  NgayMuon: string;
+  HanTra: string;
+  SoNgayQuaHan: number;
+};
+
 
 // ===== Tinh tien phat =====
 export type TinhTienPhatRequest = {
