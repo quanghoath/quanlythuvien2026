@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Calculator } from "lucide-react";
 import { useLibrary } from "@/store/libraryStore";
 import { CrudPage } from "@/components/shared/CrudPage";
 import { FormDialog } from "@/components/shared/FormDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -14,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { exportToCSV } from "@/lib/export";
 import { toast } from "sonner";
+import { phieutraApi } from "@/api/phieutra";
 import type { PhieuTra } from "@/types/library";
 
 export const Route = createFileRoute("/phieu-tra")({ component: Page });
@@ -27,12 +30,41 @@ function Page() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<PhieuTra | null>(null);
   const [form, setForm] = useState({ MaPhieuMuon: 0, NgayTra: today(), TienPhat: 0 });
+  const [calcing, setCalcing] = useState(false);
 
-  // Phiếu mượn chưa có phiếu trả
   const dsPhieuChuaTra = useMemo(
     () => phieuMuon.filter((pm) => !phieuTra.some((pt) => pt.MaPhieuMuon === pm.MaPhieuMuon)),
     [phieuMuon, phieuTra],
   );
+
+  const selectedPhieuMuon = useMemo(
+    () => phieuMuon.find((pm) => pm.MaPhieuMuon === form.MaPhieuMuon),
+    [phieuMuon, form.MaPhieuMuon],
+  );
+
+  const calcPhat = async () => {
+    if (!selectedPhieuMuon?.HanTra || !form.NgayTra) return;
+    setCalcing(true);
+    try {
+      const { data } = await phieutraApi.tinhTienPhat({
+        NgayTra: form.NgayTra,
+        HanTra: selectedPhieuMuon.HanTra.slice(0, 10),
+      });
+      setForm((f) => ({ ...f, TienPhat: Number(data.data ?? 0) }));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Không tính được tiền phạt");
+    } finally {
+      setCalcing(false);
+    }
+  };
+
+  // Auto tính phạt khi thêm mới và đổi phiếu/ngày trả
+  useEffect(() => {
+    if (!open || editing) return;
+    if (!selectedPhieuMuon || !form.NgayTra) return;
+    calcPhat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.MaPhieuMuon, form.NgayTra, open, editing]);
 
   const openAdd = () => {
     setEditing(null);
@@ -132,7 +164,7 @@ function Page() {
                   const dn = docGia.find((d) => d.MaDocGia === pm.MaDocGia)?.HoTen ?? "—";
                   return (
                     <SelectItem key={pm.MaPhieuMuon} value={String(pm.MaPhieuMuon)}>
-                      #{pm.MaPhieuMuon} · {dn} · hạn {pm.HanTra}
+                      #{pm.MaPhieuMuon} · {dn} · hạn {pm.HanTra?.slice(0, 10)}
                     </SelectItem>
                   );
                 })}
@@ -149,13 +181,31 @@ function Page() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Tiền phạt (VND)</Label>
+              <div className="flex items-center justify-between">
+                <Label>Tiền phạt (VND)</Label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 px-2"
+                  onClick={calcPhat}
+                  disabled={calcing || !selectedPhieuMuon}
+                >
+                  <Calculator className="mr-1 h-3.5 w-3.5" />
+                  {calcing ? "Đang tính..." : "Tính lại"}
+                </Button>
+              </div>
               <Input
                 type="number"
                 min={0}
                 value={form.TienPhat}
                 onChange={(e) => setForm({ ...form, TienPhat: Number(e.target.value) })}
               />
+              {selectedPhieuMuon?.HanTra && (
+                <p className="text-xs text-muted-foreground">
+                  Hạn trả: {selectedPhieuMuon.HanTra.slice(0, 10)} · {fmtMoney(form.TienPhat)}
+                </p>
+              )}
             </div>
           </div>
         </div>
