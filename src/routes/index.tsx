@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { BookOpen, Users, BookMarked, AlertTriangle, ArrowRight, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BookOpen, Users, BookMarked, AlertTriangle, ArrowRight, Library } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -20,7 +20,16 @@ import { StatCard } from "@/components/shared/StatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useLibrary } from "@/store/libraryStore";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { baocaoApi } from "@/api/baocao";
+import type { BaoCaoRp1, BaoCaoRp2, BaoCaoRp3, BaoCaoRp4, BaoCaoRp5 } from "@/types/library";
 
 export const Route = createFileRoute("/")({
   component: DashboardPage,
@@ -35,63 +44,29 @@ const PIE_COLORS = [
   "var(--primary)",
 ];
 
-const today = () => new Date().toISOString().slice(0, 10);
+const fmtDate = (s?: string) => (s ? new Date(s).toLocaleDateString("vi-VN") : "—");
 
 function DashboardPage() {
-  const { sach, docGia, phieuMuon, phieuTra, theLoai } = useLibrary();
+  const [rp1, setRp1] = useState<BaoCaoRp1 | null>(null);
+  const [rp2, setRp2] = useState<BaoCaoRp2[]>([]);
+  const [rp3, setRp3] = useState<BaoCaoRp3[]>([]);
+  const [rp4, setRp4] = useState<BaoCaoRp4[]>([]);
+  const [rp5, setRp5] = useState<BaoCaoRp5[]>([]);
 
-  const stats = useMemo(() => {
-    const tongSach = sach.reduce((s, b) => s + b.SoLuong, 0);
-    const conLai = sach.reduce((s, b) => s + b.SoLuongCon, 0);
-    const dangMuon = phieuMuon.filter(
-      (pm) => !phieuTra.some((pt) => pt.MaPhieuMuon === pm.MaPhieuMuon),
-    );
-    const quaHan = dangMuon.filter((pm) => pm.HanTra < today()).length;
-    return { tongSach, conLai, dangMuon: dangMuon.length, quaHan };
-  }, [sach, phieuMuon, phieuTra]);
+  useEffect(() => {
+    baocaoApi.getRp1().then((r) => setRp1(r.data.data)).catch(() => {});
+    baocaoApi.getRp2().then((r) => setRp2(r.data.data ?? [])).catch(() => {});
+    baocaoApi.getRp3().then((r) => setRp3(r.data.data ?? [])).catch(() => {});
+    baocaoApi.getRp4().then((r) => setRp4(r.data.data ?? [])).catch(() => {});
+    baocaoApi.getRp5().then((r) => setRp5(r.data.data ?? [])).catch(() => {});
+  }, []);
 
-  const sachTheoTheLoai = useMemo(
-    () =>
-      theLoai.map((c) => ({
-        name: c.TenTheLoai,
-        value: sach.filter((b) => b.MaTheLoai === c.MaTheLoai).reduce((s, b) => s + b.SoLuong, 0),
-      })),
-    [theLoai, sach],
-  );
+  const muonTheoThang = rp2.map((x) => ({
+    month: `${x.Thang}/${x.Nam}`,
+    count: x.SoLuong,
+  }));
 
-  const muonTheoThang = useMemo(() => {
-    const map = new Map<string, number>();
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date();
-      d.setMonth(d.getMonth() - i);
-      const key = `${d.getMonth() + 1}/${d.getFullYear()}`;
-      map.set(key, 0);
-    }
-    phieuMuon.forEach((pm) => {
-      const d = new Date(pm.NgayMuon);
-      const key = `${d.getMonth() + 1}/${d.getFullYear()}`;
-      if (map.has(key)) map.set(key, (map.get(key) ?? 0) + 1);
-    });
-    return Array.from(map.entries()).map(([month, count]) => ({ month, count }));
-  }, [phieuMuon]);
-
-  const phieuGanDay = useMemo(
-    () =>
-      [...phieuMuon]
-        .sort((a, b) => b.NgayMuon.localeCompare(a.NgayMuon))
-        .slice(0, 5)
-        .map((pm) => {
-          const dg = docGia.find((d) => d.MaDocGia === pm.MaDocGia);
-          const daTra = phieuTra.some((pt) => pt.MaPhieuMuon === pm.MaPhieuMuon);
-          const quaHan = !daTra && pm.HanTra < today();
-          return {
-            ...pm,
-            tenDocGia: dg?.HoTen ?? "—",
-            trangThai: daTra ? "returned" : quaHan ? "overdue" : "borrowing",
-          };
-        }),
-    [phieuMuon, docGia, phieuTra],
-  );
+  const sachTheoTheLoai = rp3.map((x) => ({ name: x.TenTheLoai, value: x.SoLuong }));
 
   return (
     <div className="space-y-8">
@@ -100,18 +75,22 @@ function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Tổng số sách"
-          value={stats.tongSach}
+          value={rp1?.TongSoSach ?? 0}
           icon={BookOpen}
-          hint={`${sach.length} đầu sách`}
+          hint={`${rp1?.TongDauSach ?? 0} đầu sách`}
         />
-        <StatCard label="Đang có sẵn" value={stats.conLai} icon={BookMarked} tone="success" />
-        <StatCard label="Độc giả" value={docGia.length} icon={Users} />
         <StatCard
-          label="Quá hạn"
-          value={stats.quaHan}
+          label="Đang có sẵn"
+          value={rp1?.DangCoSan ?? 0}
+          icon={Library}
+          tone="success"
+        />
+        <StatCard label="Độc giả" value={rp1?.TongDocGia ?? 0} icon={Users} />
+        <StatCard
+          label="Phiếu quá hạn"
+          value={rp1?.PhieuQuaHan ?? 0}
           icon={AlertTriangle}
           tone="destructive"
-          hint={`${stats.dangMuon} đang mượn`}
         />
       </div>
 
@@ -178,55 +157,87 @@ function DashboardPage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Phiếu mượn gần đây</CardTitle>
-          <div className="flex gap-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/phieu-tra">
-                <RotateCcw className="mr-1 h-4 w-4" /> Phiếu trả
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/phieu-muon">
-                Xem tất cả <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+          <CardTitle>Top sách được mượn</CardTitle>
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/sach">
+              Xem sách <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
         </CardHeader>
         <CardContent>
-          <div className="divide-y divide-border">
-            {phieuGanDay.map((pm) => (
-              <div key={pm.MaPhieuMuon} className="flex items-center justify-between py-3">
-                <div>
-                  <p className="font-medium">
-                    Phiếu #{pm.MaPhieuMuon} · {pm.tenDocGia}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Mượn {pm.NgayMuon} · hạn {pm.HanTra}
-                  </p>
-                </div>
-                <Badge
-                  variant={
-                    pm.trangThai === "overdue"
-                      ? "destructive"
-                      : pm.trangThai === "returned"
-                        ? "secondary"
-                        : "default"
-                  }
-                >
-                  {pm.trangThai === "overdue"
-                    ? "Quá hạn"
-                    : pm.trangThai === "returned"
-                      ? "Đã trả"
-                      : "Đang mượn"}
-                </Badge>
-              </div>
-            ))}
-            {phieuGanDay.length === 0 && (
-              <p className="py-6 text-center text-sm text-muted-foreground">
-                Chưa có phiếu mượn nào.
-              </p>
-            )}
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={rp4} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis
+                  type="number"
+                  stroke="var(--muted-foreground)"
+                  fontSize={12}
+                  allowDecimals={false}
+                />
+                <YAxis
+                  dataKey="TenSach"
+                  type="category"
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  width={180}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 8,
+                  }}
+                />
+                <Bar dataKey="TongLuotMuon" fill="var(--chart-2)" radius={[0, 6, 6, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Phiếu mượn quá hạn</CardTitle>
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/phieu-muon">
+              <BookMarked className="mr-1 h-4 w-4" /> Phiếu mượn
+            </Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Phiếu</TableHead>
+                <TableHead>Độc giả</TableHead>
+                <TableHead>Ngày mượn</TableHead>
+                <TableHead>Hạn trả</TableHead>
+                <TableHead className="text-right">Số ngày quá hạn</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rp5.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="py-6 text-center text-sm text-muted-foreground">
+                    Không có phiếu quá hạn 🎉
+                  </TableCell>
+                </TableRow>
+              ) : (
+                rp5.map((r) => (
+                  <TableRow key={r.MaPhieuMuon}>
+                    <TableCell>#{r.MaPhieuMuon}</TableCell>
+                    <TableCell>{r.HoTen}</TableCell>
+                    <TableCell>{fmtDate(r.NgayMuon)}</TableCell>
+                    <TableCell>{fmtDate(r.HanTra)}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="destructive">{r.SoNgayQuaHan} ngày</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

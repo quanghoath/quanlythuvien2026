@@ -4,7 +4,6 @@ import {
   Users,
   BookMarked,
   Tag,
-  BarChart3,
   LayoutDashboard,
   Library,
   UserSquare2,
@@ -14,6 +13,7 @@ import {
   History,
   LogOut,
 } from "lucide-react";
+
 import {
   Sidebar,
   SidebarContent,
