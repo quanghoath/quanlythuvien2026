@@ -18,7 +18,6 @@ import { Route as PhieuTraRouteImport } from './routes/phieu-tra'
 import { Route as PhieuMuonRouteImport } from './routes/phieu-muon'
 import { Route as NhatKySachRouteImport } from './routes/nhat-ky-sach'
 import { Route as DocGiaRouteImport } from './routes/doc-gia'
-import { Route as BaoCaoRouteImport } from './routes/bao-cao'
 import { Route as IndexRouteImport } from './routes/index'
 
 const VaiTroRoute = VaiTroRouteImport.update({
@@ -66,11 +65,6 @@ const DocGiaRoute = DocGiaRouteImport.update({
   path: '/doc-gia',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BaoCaoRoute = BaoCaoRouteImport.update({
-  id: '/bao-cao',
-  path: '/bao-cao',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,7 +73,6 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/bao-cao': typeof BaoCaoRoute
   '/doc-gia': typeof DocGiaRoute
   '/nhat-ky-sach': typeof NhatKySachRoute
   '/phieu-muon': typeof PhieuMuonRoute
@@ -92,7 +85,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/bao-cao': typeof BaoCaoRoute
   '/doc-gia': typeof DocGiaRoute
   '/nhat-ky-sach': typeof NhatKySachRoute
   '/phieu-muon': typeof PhieuMuonRoute
@@ -106,7 +98,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/bao-cao': typeof BaoCaoRoute
   '/doc-gia': typeof DocGiaRoute
   '/nhat-ky-sach': typeof NhatKySachRoute
   '/phieu-muon': typeof PhieuMuonRoute
@@ -121,7 +112,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/bao-cao'
     | '/doc-gia'
     | '/nhat-ky-sach'
     | '/phieu-muon'
@@ -134,7 +124,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/bao-cao'
     | '/doc-gia'
     | '/nhat-ky-sach'
     | '/phieu-muon'
@@ -147,7 +136,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/bao-cao'
     | '/doc-gia'
     | '/nhat-ky-sach'
     | '/phieu-muon'
@@ -161,7 +149,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BaoCaoRoute: typeof BaoCaoRoute
   DocGiaRoute: typeof DocGiaRoute
   NhatKySachRoute: typeof NhatKySachRoute
   PhieuMuonRoute: typeof PhieuMuonRoute
@@ -238,13 +225,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocGiaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/bao-cao': {
-      id: '/bao-cao'
-      path: '/bao-cao'
-      fullPath: '/bao-cao'
-      preLoaderRoute: typeof BaoCaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -257,7 +237,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BaoCaoRoute: BaoCaoRoute,
   DocGiaRoute: DocGiaRoute,
   NhatKySachRoute: NhatKySachRoute,
   PhieuMuonRoute: PhieuMuonRoute,
