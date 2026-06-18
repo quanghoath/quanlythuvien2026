@@ -151,6 +151,7 @@ export type BaoCaoRp5 = {
 
 // ===== Tinh tien phat =====
 export type TinhTienPhatRequest = {
-  hanTra: string;
-  ngayTra: string;
+  NgayTra: string;
+  HanTra: string;
 };
+
