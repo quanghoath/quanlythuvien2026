@@ -98,9 +98,8 @@ function Page() {
     setViewLoading(true);
     setViewData({ pm: r, details: [] });
     try {
-      const { data } = await phieumuonApi.getById(r.MaPhieuMuon);
-      const payload = data.data;
-      let details: PhieuMuonChiTietItem[] = payload?.details ?? [];
+      const { data: resp } = await phieumuonApi.getById(r.MaPhieuMuon);
+      let details: PhieuMuonChiTietItem[] = resp?.details ?? [];
       const needFetch = details.filter((d) => !d.TenSach);
       if (needFetch.length > 0) {
         const books = await Promise.all(
@@ -113,7 +112,7 @@ function Page() {
         }));
       }
       setViewData({
-        pm: payload?.data ?? r,
+        pm: resp?.data ?? r,
         details,
       });
     } catch {
