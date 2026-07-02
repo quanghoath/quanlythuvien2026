@@ -5,7 +5,7 @@ export const phieumuonApi = {
   getAll: () => apiClient.get<ApiResponse<PhieuMuon[]>>("/api/phieumuon"),
 
   getById: (id: number) =>
-    apiClient.get<ApiResponse<{ data: PhieuMuon; details: PhieuMuonChiTietItem[] }>>(
+    apiClient.get<ApiResponse<PhieuMuon> & { details: PhieuMuonChiTietItem[] }>(
       `/api/phieumuon/${id}`,
     ),
 
