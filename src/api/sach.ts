@@ -8,4 +8,6 @@ export const sachApi = {
     apiClient.post<ApiResponse<null>>("/api/sach", data),
 
   remove: (id: number) => apiClient.delete<ApiResponse<null>>(`/api/sach/${id}`),
+
+  getById: (id: number) => apiClient.get<ApiResponse<Sach>>(`/api/sach/${id}`),
 };

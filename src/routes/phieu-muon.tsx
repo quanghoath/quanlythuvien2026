@@ -33,6 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import { exportToCSV } from "@/lib/export";
 import { toast } from "sonner";
 import { phieumuonApi } from "@/api/phieumuon";
+import { sachApi } from "@/api/sach";
 import type { PhieuMuon, PhieuMuonChiTietItem } from "@/types/library";
 
 export const Route = createFileRoute("/phieu-muon")({ component: Page });
@@ -99,9 +100,21 @@ function Page() {
     try {
       const { data } = await phieumuonApi.getById(r.MaPhieuMuon);
       const payload = data.data;
+      let details: PhieuMuonChiTietItem[] = payload?.details ?? [];
+      const needFetch = details.filter((d) => !d.TenSach);
+      if (needFetch.length > 0) {
+        const books = await Promise.all(
+          needFetch.map((d) => sachApi.getById(d.MaSach).then((res) => res.data.data)),
+        );
+        const map = new Map(books.map((b) => [b.MaSach, b.TenSach]));
+        details = details.map((d) => ({
+          ...d,
+          TenSach: d.TenSach ?? map.get(d.MaSach) ?? `#${d.MaSach}`,
+        }));
+      }
       setViewData({
         pm: payload?.data ?? r,
-        details: payload?.details ?? [],
+        details,
       });
     } catch {
       toast.error("Không tải được chi tiết phiếu mượn");
