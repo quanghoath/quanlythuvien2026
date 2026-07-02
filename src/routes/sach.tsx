@@ -89,11 +89,24 @@ function Page() {
     setOpen(false);
   };
 
+  const tongSoLuong = sach.reduce((sum, item) => sum + item.SoLuong, 0);
+  const tongCon = sach.reduce((sum, item) => sum + item.SoLuongCon, 0);
+  const hetSach = sach.filter((item) => item.SoLuongCon === 0).length;
+
   return (
     <>
       <CrudPage
         title="Sách"
         description="Quản lý kho sách của thư viện."
+        summary={[
+          { label: "Đầu sách", value: sach.length, hint: "Tổng số bản ghi sách hiện có." },
+          { label: "Tổng số lượng", value: tongSoLuong, hint: "Số cuốn được quản lý trong kho." },
+          { label: "Còn khả dụng", value: tongCon, hint: "Số cuốn có thể cho mượn ngay." },
+          { label: "Hết sách", value: hetSach, hint: "Đầu sách đang không còn bản khả dụng." },
+        ]}
+        searchPlaceholder="Tìm theo tên sách..."
+        emptyTitle="Chưa có sách nào"
+        emptyDescription="Thêm đầu sách đầu tiên để bắt đầu quản lý kho và dòng mượn trả."
         data={sach}
         getId={(r) => r.MaSach}
         columns={[
@@ -113,7 +126,7 @@ function Page() {
             header: "Thể loại",
             render: (r) => theLoai.find((x) => x.MaTheLoai === r.MaTheLoai)?.TenTheLoai ?? "—",
           },
-          { key: "y", header: "Năm XB", render: (r) => r.NamXuatBan ?? "—", className: "w-20" },
+          { key: "y", header: "Năm XB", render: (r) => r.NamXuatBan ?? "—", className: "w-30" },
           {
             key: "sl",
             header: "Tổng / Còn",

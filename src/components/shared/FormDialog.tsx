@@ -30,21 +30,23 @@ export function FormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-xl">{title}</DialogTitle>
         </DialogHeader>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             setBusy(true);
             try {
-              onSubmit();
+              await onSubmit();
             } finally {
               setBusy(false);
             }
           }}
-          className="space-y-4"
+          className="space-y-5"
         >
-          <div className="grid gap-4">{children}</div>
+          <div className="surface-panel grid gap-4 rounded-2xl border border-border/70 p-4 sm:p-5">
+            {children}
+          </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Huỷ

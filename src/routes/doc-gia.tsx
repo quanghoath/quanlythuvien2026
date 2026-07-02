@@ -40,11 +40,22 @@ function Page() {
     setOpen(false);
   };
 
+  const coSoDienThoai = docGia.filter((item) => !!item.SoDienThoai).length;
+  const coDiaChi = docGia.filter((item) => !!item.DiaChi).length;
+
   return (
     <>
       <CrudPage
         title="Độc giả"
         description="Danh sách độc giả của thư viện."
+        summary={[
+          { label: "Độc giả", value: docGia.length, hint: "Tổng số hồ sơ bạn đọc." },
+          { label: "Có số điện thoại", value: coSoDienThoai, hint: "Hồ sơ đủ thông tin liên hệ." },
+          { label: "Có địa chỉ", value: coDiaChi, hint: "Hồ sơ có địa chỉ lưu trú." },
+        ]}
+        searchPlaceholder="Tìm theo họ tên, số điện thoại hoặc địa chỉ..."
+        emptyTitle="Chưa có độc giả"
+        emptyDescription="Thêm hồ sơ bạn đọc để bắt đầu tạo phiếu mượn và theo dõi lịch sử giao dịch."
         data={docGia}
         getId={(r) => r.MaDocGia}
         columns={[

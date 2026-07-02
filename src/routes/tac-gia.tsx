@@ -45,6 +45,12 @@ function Page() {
       <CrudPage
         title="Tác giả"
         description="Quản lý danh sách tác giả."
+        summary={[
+          { label: "Tác giả", value: tacGia.length, hint: "Số tác giả đang được lưu trữ." },
+        ]}
+        searchPlaceholder="Tìm theo tên tác giả..."
+        emptyTitle="Chưa có tác giả"
+        emptyDescription="Tạo danh sách tác giả để liên kết chính xác với các đầu sách."
         data={tacGia}
         getId={(r) => r.MaTacGia}
         columns={[

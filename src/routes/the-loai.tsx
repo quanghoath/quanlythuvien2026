@@ -40,11 +40,24 @@ function Page() {
     setOpen(false);
   };
 
+  const tongSachGanTheLoai = sach.length;
+
   return (
     <>
       <CrudPage
         title="Thể loại"
         description="Phân loại sách trong thư viện."
+        summary={[
+          { label: "Thể loại", value: theLoai.length, hint: "Số nhóm phân loại hiện có." },
+          {
+            label: "Sách đã phân loại",
+            value: tongSachGanTheLoai,
+            hint: "Tổng số đầu sách đang gắn thể loại.",
+          },
+        ]}
+        searchPlaceholder="Tìm theo tên thể loại..."
+        emptyTitle="Chưa có thể loại"
+        emptyDescription="Tạo thể loại để cấu trúc kho sách và tăng tốc độ tra cứu."
         data={theLoai}
         getId={(r) => r.MaTheLoai}
         columns={[

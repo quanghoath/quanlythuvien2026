@@ -41,6 +41,7 @@ function Page() {
     () => phieuMuon.find((pm) => pm.MaPhieuMuon === form.MaPhieuMuon),
     [phieuMuon, form.MaPhieuMuon],
   );
+  const tongPhat = phieuTra.reduce((sum, item) => sum + item.TienPhat, 0);
 
   const calcPhat = async () => {
     if (!selectedPhieuMuon?.HanTra || !form.NgayTra) return;
@@ -94,6 +95,14 @@ function Page() {
       <CrudPage
         title="Phiếu trả"
         description="Ghi nhận trả sách và tính tiền phạt nếu quá hạn."
+        summary={[
+          { label: "Phiếu trả", value: phieuTra.length, hint: "Tổng số giao dịch trả sách." },
+          { label: "Chưa trả", value: dsPhieuChuaTra.length, hint: "Phiếu mượn còn đang mở." },
+          { label: "Tiền phạt", value: fmtMoney(tongPhat), hint: "Tổng tiền phạt đã ghi nhận." },
+        ]}
+        searchPlaceholder="Tìm theo mã phiếu mượn hoặc phiếu trả..."
+        emptyTitle="Chưa có phiếu trả"
+        emptyDescription="Ghi nhận trả sách để hoàn tất vòng đời của phiếu mượn."
         data={phieuTra}
         getId={(r) => r.MaPhieuTra}
         columns={[
@@ -102,7 +111,7 @@ function Page() {
             key: "pm",
             header: "Phiếu mượn",
             render: (r) => `#${r.MaPhieuMuon}`,
-            className: "w-28",
+            className: "w-35",
           },
           {
             key: "dg",

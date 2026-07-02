@@ -63,7 +63,6 @@ const stateLabel = (s?: string, hanTra?: string) => {
   }
 };
 
-
 function Page() {
   const { phieuMuon, docGia, sach, addPhieuMuon, deletePhieuMuon } = useLibrary();
 
@@ -79,6 +78,13 @@ function Page() {
   }>({ pm: null, details: [] });
 
   const rows = useMemo(() => phieuMuon, [phieuMuon]);
+  const dangMuon = rows.filter(
+    (item) => stateLabel(item.State, item.HanTra).text === "Đang mượn",
+  ).length;
+  const quaHan = rows.filter(
+    (item) => stateLabel(item.State, item.HanTra).text === "Quá hạn",
+  ).length;
+  const tongSachMuon = rows.reduce((sum, item) => sum + (item.SoLuongSach ?? 0), 0);
 
   const handleAdd = () => {
     setForm({ MaDocGia: docGia[0]?.MaDocGia ?? 0, NgayMuon: today(), HanTra: addDays(14) });
@@ -126,6 +132,19 @@ function Page() {
       <CrudPage
         title="Phiếu mượn"
         description="Quản lý phiếu mượn sách của độc giả."
+        summary={[
+          { label: "Phiếu mượn", value: rows.length, hint: "Tổng số phiếu đã tạo." },
+          { label: "Đang mượn", value: dangMuon, hint: "Phiếu chưa hoàn tất trả sách." },
+          { label: "Quá hạn", value: quaHan, hint: "Phiếu cần được ưu tiên xử lý." },
+          {
+            label: "Sách đang luân chuyển",
+            value: tongSachMuon,
+            hint: "Số cuốn trong các phiếu mượn.",
+          },
+        ]}
+        searchPlaceholder="Tìm theo mã phiếu hoặc độc giả..."
+        emptyTitle="Chưa có phiếu mượn"
+        emptyDescription="Tạo phiếu mượn để ghi nhận giao dịch sách cho độc giả."
         data={rows}
         getId={(r) => r.MaPhieuMuon}
         columns={[
@@ -133,7 +152,7 @@ function Page() {
           { key: "dg", header: "Độc giả", render: (r) => r.TenDocGia ?? r.MaDocGia ?? "—" },
           { key: "nm", header: "Ngày mượn", render: (r) => fmtDate(r.NgayMuon), className: "w-32" },
           { key: "ht", header: "Hạn trả", render: (r) => fmtDate(r.HanTra), className: "w-32" },
-          { key: "sl", header: "Số sách", render: (r) => r.SoLuongSach ?? 0, className: "w-24" },
+          { key: "sl", header: "Số sách", render: (r) => r.SoLuongSach ?? 0, className: "w-28" },
           {
             key: "tt",
             header: "Trạng thái",
@@ -173,12 +192,7 @@ function Page() {
         }
       />
 
-      <FormDialog
-        open={openAdd}
-        onOpenChange={setOpenAdd}
-        title="Tạo phiếu mượn"
-        onSubmit={submit}
-      >
+      <FormDialog open={openAdd} onOpenChange={setOpenAdd} title="Tạo phiếu mượn" onSubmit={submit}>
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-3 space-y-2">
             <Label>Độc giả</Label>
@@ -284,9 +298,7 @@ function Page() {
       <Dialog open={viewOpen} onOpenChange={setViewOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>
-              Chi tiết phiếu mượn #{viewData.pm?.MaPhieuMuon ?? ""}
-            </DialogTitle>
+            <DialogTitle>Chi tiết phiếu mượn #{viewData.pm?.MaPhieuMuon ?? ""}</DialogTitle>
           </DialogHeader>
           {viewLoading ? (
             <p className="py-8 text-center text-sm text-muted-foreground">Đang tải...</p>
@@ -304,7 +316,6 @@ function Page() {
                   <Badge variant={stateLabel(viewData.pm?.State, viewData.pm?.HanTra).variant}>
                     {stateLabel(viewData.pm?.State, viewData.pm?.HanTra).text}
                   </Badge>
-
                 </div>
                 <div>
                   <span className="text-muted-foreground">Ngày mượn:</span>{" "}

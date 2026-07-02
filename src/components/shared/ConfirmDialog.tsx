@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -27,6 +28,9 @@ export function ConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
+          <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+          </div>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>

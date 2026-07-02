@@ -148,10 +148,8 @@ export type BaoCaoRp5 = {
   SoNgayQuaHan: number;
 };
 
-
 // ===== Tinh tien phat =====
 export type TinhTienPhatRequest = {
   NgayTra: string;
   HanTra: string;
 };
-

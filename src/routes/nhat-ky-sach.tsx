@@ -8,11 +8,26 @@ export const Route = createFileRoute("/nhat-ky-sach")({ component: Page });
 
 function Page() {
   const { nhatKySach, sach, deleteNhatKy } = useLibrary();
+  const homNay = new Date().toDateString();
+  const capNhatHomNay = nhatKySach.filter(
+    (item) => new Date(item.NgayCapNhat).toDateString() === homNay,
+  ).length;
 
   return (
     <CrudPage
       title="Nhật ký sách"
       description="Lịch sử thay đổi thông tin sách."
+      summary={[
+        { label: "Bản ghi", value: nhatKySach.length, hint: "Tổng số thay đổi đã được lưu." },
+        {
+          label: "Cập nhật hôm nay",
+          value: capNhatHomNay,
+          hint: "Những thay đổi phát sinh trong ngày.",
+        },
+      ]}
+      searchPlaceholder="Tìm theo tên sách cũ hoặc mới..."
+      emptyTitle="Chưa có nhật ký thay đổi"
+      emptyDescription="Lịch sử chỉnh sửa sách sẽ xuất hiện tại đây khi dữ liệu được cập nhật."
       data={nhatKySach}
       getId={(r) => r.MaNhatKy}
       columns={[

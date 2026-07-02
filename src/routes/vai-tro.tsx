@@ -12,7 +12,7 @@ import type { VaiTro } from "@/types/library";
 export const Route = createFileRoute("/vai-tro")({ component: Page });
 
 function Page() {
-  const { vaiTro, addVaiTro, updateVaiTro, deleteVaiTro } = useLibrary();
+  const { vaiTro, taiKhoan, addVaiTro, updateVaiTro, deleteVaiTro } = useLibrary();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<VaiTro | null>(null);
   const [ten, setTen] = useState("");
@@ -45,6 +45,17 @@ function Page() {
       <CrudPage
         title="Vai trò"
         description="Quản lý vai trò người dùng hệ thống."
+        summary={[
+          { label: "Vai trò", value: vaiTro.length, hint: "Tổng số vai trò phân quyền." },
+          {
+            label: "Tài khoản đã gán",
+            value: taiKhoan.length,
+            hint: "Tổng số tài khoản đang được gán vào vai trò.",
+          },
+        ]}
+        searchPlaceholder="Tìm theo tên vai trò..."
+        emptyTitle="Chưa có vai trò"
+        emptyDescription="Thiết lập vai trò để phân quyền nhất quán cho các tài khoản người dùng."
         data={vaiTro}
         getId={(r) => r.MaVaiTro}
         columns={[

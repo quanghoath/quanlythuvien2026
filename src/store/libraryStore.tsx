@@ -116,17 +116,16 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
 
   const refetchAll = useCallback(async () => {
     try {
-      const [sRes, tgRes, tlRes, dgRes, pmRes, ptRes, nkRes, tkRes] =
-        await Promise.allSettled([
-          sachApi.getAll(),
-          tacgiaApi.getAll(),
-          theloaiApi.getAll(),
-          docgiaApi.getAll(),
-          phieumuonApi.getAll(),
-          phieutraApi.getAll(),
-          nhatkyApi.getAll(),
-          taikhoanApi.getAll(),
-        ]);
+      const [sRes, tgRes, tlRes, dgRes, pmRes, ptRes, nkRes, tkRes] = await Promise.allSettled([
+        sachApi.getAll(),
+        tacgiaApi.getAll(),
+        theloaiApi.getAll(),
+        docgiaApi.getAll(),
+        phieumuonApi.getAll(),
+        phieutraApi.getAll(),
+        nhatkyApi.getAll(),
+        taikhoanApi.getAll(),
+      ]);
       if (sRes.status === "fulfilled" && sRes.value.data.status === 2000)
         setSach(sRes.value.data.data);
       if (tgRes.status === "fulfilled" && tgRes.value.data.status === 2000)

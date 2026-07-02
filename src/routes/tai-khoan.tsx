@@ -60,6 +60,17 @@ function Page() {
       <CrudPage
         title="Tài khoản"
         description="Quản lý tài khoản đăng nhập."
+        summary={[
+          {
+            label: "Tài khoản",
+            value: taiKhoan.length,
+            hint: "Số tài khoản đang hoạt động trong hệ thống.",
+          },
+          { label: "Vai trò", value: vaiTro.length, hint: "Số nhóm quyền đang được sử dụng." },
+        ]}
+        searchPlaceholder="Tìm theo tên đăng nhập hoặc họ tên..."
+        emptyTitle="Chưa có tài khoản"
+        emptyDescription="Tạo tài khoản để cấp quyền truy cập cho nhân sự vận hành."
         data={taiKhoan}
         getId={(r) => r.MaTaiKhoan}
         columns={[
